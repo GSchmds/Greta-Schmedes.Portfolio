@@ -1,0 +1,760 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Medal Holder</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Layout: a drawing sheet. Section labels sit in a narrow left column like title-block cells, content runs to the right.
+     Boldness lives in one place: the black / red / yellow event colours from the stickman figures. Everything else stays quiet. */
+  --paper:#F3F4F1; --paper-2:#E8EAE4; --ink:#14161A; --ink-2:#4B5058; --rule:#C8CCC4;
+  --ev-hurdle:#17181B; --ev-high:#D7262B; --ev-long:#F2B705;
+  --warn:#B81D23; --focus:#1F5FD6;
+  --f-display:'Barlow Condensed','Arial Narrow',Arial,sans-serif;
+  --f-body:'IBM Plex Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --f-mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#111316; --paper-2:#1A1D21; --ink:#EDECE8; --ink-2:#A7AAAF; --rule:#2C3036;
+    --warn:#FF7378; --focus:#8DB1FF; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#111316; --paper-2:#1A1D21; --ink:#EDECE8; --ink-2:#A7AAAF; --rule:#2C3036;
+  --warn:#FF7378; --focus:#8DB1FF; color-scheme:dark;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:var(--f-body); font-size:16px; line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:0;
+}
+.wrap{max-width:1120px; margin:0 auto}
+img,svg{max-width:100%}
+a{color:inherit}
+button{font:inherit; color:inherit}
+:focus-visible{outline:2px solid var(--focus); outline-offset:2px}
+h1,h2,h3{font-family:var(--f-display); font-weight:700; line-height:.98; margin:0; text-wrap:balance; text-transform:uppercase; letter-spacing:.01em}
+h1{font-size:clamp(3.4rem,13vw,7.5rem)}
+h2{font-size:clamp(2rem,5.2vw,3.1rem)}
+h3{font-size:1.45rem; letter-spacing:.03em}
+p{margin:0}
+.mono{font-family:var(--f-mono); font-size:.75rem; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-2)}
+.muted{color:var(--ink-2)}
+.measure{max-width:65ch}
+
+/* top strip */
+.top{display:flex; flex-wrap:wrap; gap:8px 24px; justify-content:space-between; align-items:center; padding-block:20px; border-bottom:1px solid var(--rule)}
+.top nav{display:flex; flex-wrap:wrap; gap:4px 20px}
+.top a{text-decoration:none}
+.top a:hover{text-decoration:underline}
+
+/* hero */
+.hero{display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,1fr); gap:40px 56px; align-items:end; padding-block:56px 64px}
+.hero-copy{display:flex; flex-direction:column; gap:24px; min-width:0}
+.eyebrow{display:flex; align-items:center; gap:10px}
+.bars3{display:inline-flex; gap:4px}
+.bars3 i{display:block; width:22px; height:8px; border-radius:2px}
+.lede{font-size:1.18rem; max-width:34ch}
+.facts{display:grid; grid-template-columns:auto minmax(0,1fr); gap:6px 20px; margin:8px 0 0; font-size:.92rem}
+.facts dt{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-2); padding-top:3px}
+.facts dd{margin:0}
+
+.dim{position:relative; padding:34px 44px 0 0; min-width:0}
+.dim img{display:block; width:100%; height:auto; border-radius:8px}
+.dim-w,.dim-h{position:absolute; display:flex; align-items:center; gap:10px; color:var(--ink-2); font-family:var(--f-mono); font-size:.72rem; letter-spacing:.06em; white-space:nowrap}
+.dim-w{top:4px; left:0; right:44px; height:14px; border-left:1px solid; border-right:1px solid}
+.dim-w::before,.dim-w::after{content:""; flex:1; height:1px; background:currentColor}
+.dim-w span{padding:0 2px}
+.dim-h{top:34px; bottom:0; right:6px; width:14px; flex-direction:column; border-top:1px solid; border-bottom:1px solid}
+.dim-h::before,.dim-h::after{content:""; flex:1; width:1px; background:currentColor}
+.dim-h span{writing-mode:vertical-rl; padding:2px 0}
+.cap{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.06em; color:var(--ink-2); margin-top:12px}
+
+/* sections */
+.sec{display:grid; grid-template-columns:minmax(0,170px) minmax(0,1fr); gap:20px 40px; padding-block:64px; border-top:1px solid var(--rule)}
+.sec>.lab{padding-top:6px}
+.sec-body{min-width:0; display:flex; flex-direction:column; gap:32px}
+.sec-head{display:flex; flex-direction:column; gap:14px}
+.sec-head p{max-width:62ch}
+
+.two{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:32px}
+.specs{display:grid; grid-template-columns:auto minmax(0,1fr); gap:10px 20px; margin:0}
+.specs dt{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-2); padding-top:4px}
+.specs dd{margin:0}
+
+/* polls */
+.polls{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:28px}
+.poll{display:flex; flex-direction:column; gap:14px; min-width:0}
+.poll h3{font-size:1.25rem}
+.poll .row{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:4px 12px; align-items:center; font-size:.9rem}
+.poll .row .bar{grid-column:1/-1; height:10px; background:var(--paper-2); border-radius:2px; overflow:hidden}
+.poll .row .bar i{display:block; height:100%; background:var(--ink-2)}
+.poll .row.win .bar i{background:var(--ink)}
+.poll .row.win .lbl{font-weight:600}
+.poll .n{font-family:var(--f-mono); font-size:.8rem; font-variant-numeric:tabular-nums}
+
+/* sketch strip */
+.strip{display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:14px}
+.strip figure{margin:0; display:flex; flex-direction:column; gap:8px; min-width:0}
+.strip img{width:100%; aspect-ratio:1/0.85; object-fit:contain; background:#fff; border-radius:6px; border:1px solid var(--rule)}
+.strip figcaption{font-size:.8rem; line-height:1.35; color:var(--ink-2)}
+
+/* tabs */
+.tabs{display:flex; flex-wrap:wrap; gap:8px}
+.tab{padding:7px 16px; border:1px solid var(--rule); background:transparent; border-radius:4px; cursor:pointer; font-family:var(--f-display); font-weight:600; font-size:1.1rem; letter-spacing:.05em; text-transform:uppercase}
+.tab:hover{border-color:var(--ink-2)}
+.tab[aria-selected="true"]{background:var(--ink); color:var(--paper); border-color:var(--ink)}
+.panel{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:32px; align-items:start}
+.panel .shot{background:#fff; border-radius:8px; border:1px solid var(--rule); padding:10px}
+.panel .shot img{display:block; width:100%; height:auto; border-radius:4px}
+.panel .info{display:flex; flex-direction:column; gap:18px; min-width:0}
+.kv{display:flex; flex-direction:column; gap:4px}
+.kv p{max-width:52ch}
+.meter-row{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:6px 12px; align-items:center}
+.meter{height:8px; background:var(--paper-2); border-radius:2px; overflow:hidden; grid-column:1/-1; order:2}
+.meter i{display:block; height:100%; background:var(--ink)}
+.took{border-top:1px solid var(--ink); padding-top:12px}
+.took strong{font-weight:600}
+.recipe{display:flex; flex-wrap:wrap; gap:8px}
+.recipe button{border:1px solid var(--rule); background:transparent; border-radius:999px; padding:6px 14px; cursor:pointer; font-size:.88rem}
+.recipe button:hover{border-color:var(--ink)}
+.recipe b{font-weight:600}
+
+/* rack */
+.rack-wrap{display:grid; grid-template-columns:minmax(0,1fr); gap:20px}
+.rack-ui{display:flex; flex-wrap:wrap; gap:14px 24px; align-items:center}
+.seg{display:inline-flex; flex-wrap:wrap; gap:8px}
+.chip{display:inline-flex; align-items:center; gap:8px; padding:8px 14px; border:1.5px solid var(--rule); background:transparent; border-radius:999px; cursor:pointer; font-size:.9rem; font-weight:500}
+.chip:hover{border-color:var(--ink-2)}
+.chip[aria-checked="true"],.chip[aria-pressed="true"]{border-color:var(--ink); background:var(--paper-2)}
+.sw{width:14px; height:14px; border-radius:50%; background:var(--c); box-shadow:0 0 0 1px var(--ink-2); flex:none}
+.btn{padding:8px 16px; border:1.5px solid var(--ink); background:var(--ink); color:var(--paper); border-radius:4px; cursor:pointer; font-weight:500; font-size:.9rem}
+.btn.ghost{background:transparent; color:var(--ink)}
+.btn:hover{opacity:.88}
+.rack-stage{background:var(--paper-2); border-radius:8px; padding:16px; min-width:0}
+.rack-stage svg{display:block; width:100%; height:auto; touch-action:manipulation}
+.rack-stage .hit{fill:transparent; cursor:pointer}
+.rack-stage .hit:hover{fill:rgba(20,22,26,.12)}
+.rack-stage .hit:focus-visible{outline:none; stroke:var(--focus); stroke-width:3}
+.rack-stage .full{stroke:var(--ink); stroke-width:2}
+.readout{display:flex; flex-wrap:wrap; gap:8px 28px; align-items:baseline}
+.readout .big{font-family:var(--f-display); font-weight:700; font-size:2.4rem; line-height:1; font-variant-numeric:tabular-nums}
+.readout .big small{font-size:1.1rem; color:var(--ink-2); font-weight:600}
+.tally{display:flex; flex-wrap:wrap; gap:6px 18px; font-family:var(--f-mono); font-size:.78rem; color:var(--ink-2)}
+.tally span{display:inline-flex; align-items:center; gap:6px}
+.tally b{font-weight:500; color:var(--ink); font-variant-numeric:tabular-nums}
+.note{min-height:3.2em; max-width:68ch; color:var(--ink-2); font-size:.95rem}
+.fig-row{display:grid; grid-template-columns:minmax(0,260px) minmax(0,1fr); gap:28px; align-items:start}
+.fig-row img{display:block; width:100%; height:auto; border-radius:8px}
+.fig-row .txt{display:flex; flex-direction:column; gap:10px; max-width:56ch}
+
+/* stepper */
+.steps{display:grid; grid-template-columns:56px minmax(0,1fr); gap:32px; align-items:start}
+.rail{display:flex; flex-direction:column; gap:6px; list-style:none; margin:0; padding:0}
+.rail button{width:48px; height:48px; border:1.5px solid var(--rule); background:transparent; border-radius:4px; cursor:pointer; font-family:var(--f-display); font-weight:700; font-size:1.3rem; font-variant-numeric:tabular-nums}
+.rail button:hover{border-color:var(--ink-2)}
+.rail button[aria-current="step"]{background:var(--ink); color:var(--paper); border-color:var(--ink)}
+.step-body{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:28px; align-items:start; min-width:0}
+.step-text{display:flex; flex-direction:column; gap:14px; min-width:0}
+.step-text .snag{border-top:1px solid var(--warn); padding-top:10px; color:var(--ink)}
+.step-text .snag .mono{color:var(--warn)}
+.step-imgs{display:flex; flex-direction:column; gap:12px; min-width:0}
+.step-imgs figure{margin:0}
+.step-imgs img{display:block; width:100%; height:auto; border-radius:6px; background:#fff; border:1px solid var(--rule)}
+.step-imgs figcaption{font-size:.78rem; color:var(--ink-2); margin-top:6px}
+.noimg{border:1px dashed var(--rule); border-radius:6px; padding:22px; color:var(--ink-2); font-size:.9rem}
+.settings{border-collapse:collapse; font-size:.85rem; width:100%}
+.settings th,.settings td{text-align:left; padding:6px 10px 6px 0; border-bottom:1px solid var(--rule); font-variant-numeric:tabular-nums}
+.settings th{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-2); font-weight:400}
+.step-nav{display:flex; gap:10px}
+
+/* plan vs built */
+.pvb{display:grid; grid-template-columns:minmax(0,1fr); gap:20px}
+.pvb svg{display:block; width:100%; height:auto}
+.pvb text{font-family:var(--f-mono); font-size:11px; fill:var(--ink-2)}
+.pvb .plan-box{fill:none; stroke:var(--ink-2); stroke-width:1.2; stroke-dasharray:5 4}
+.pvb .bed-box{fill:none; stroke:var(--warn); stroke-width:1.2; stroke-dasharray:2 3}
+.pvb .built-box{fill:#E8D8B8; stroke:#BFA373; stroke-width:1.5; transition:all .35s ease}
+.pvb .dimline{stroke:var(--ink-2); stroke-width:1}
+.legend{display:flex; flex-wrap:wrap; gap:6px 22px; font-size:.85rem; color:var(--ink-2)}
+.legend span{display:inline-flex; align-items:center; gap:8px}
+.legend i{display:inline-block; width:22px; height:0; border-top:2px dashed var(--ink-2)}
+.legend i.bed{border-color:var(--warn)}
+.legend i.solid{border-top:10px solid #E8D8B8; outline:1px solid #BFA373; height:0}
+.tbl-wrap{overflow-x:auto}
+table.cmp{border-collapse:collapse; width:100%; min-width:620px; font-size:.92rem}
+table.cmp th,table.cmp td{text-align:left; vertical-align:top; padding:12px 18px 12px 0; border-bottom:1px solid var(--rule)}
+table.cmp th{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-2); font-weight:400}
+table.cmp td:first-child{font-weight:600; white-space:nowrap}
+.pvb[data-state="plan"] .built, .pvb[data-state="built"] .plan{opacity:.38}
+.pvb .plan,.pvb .built{transition:opacity .25s ease}
+
+/* tests */
+.test-bar{display:flex; flex-wrap:wrap; gap:12px 24px; align-items:center; justify-content:space-between}
+.score{font-family:var(--f-display); font-weight:700; font-size:2.4rem; line-height:1; text-transform:uppercase}
+.score small{font-size:1.1rem; color:var(--ink-2)}
+.tests{list-style:none; margin:0; padding:0; border-top:1px solid var(--ink)}
+.tests li{border-bottom:1px solid var(--rule)}
+.tests summary{display:grid; grid-template-columns:44px minmax(0,1fr) 130px 110px; gap:12px; align-items:center; padding:14px 0; cursor:pointer; list-style:none}
+.tests summary::-webkit-details-marker{display:none}
+.tests summary:hover .c{text-decoration:underline}
+.tests .id{font-family:var(--f-mono); font-size:.78rem; color:var(--ink-2)}
+.tests .c{font-weight:600}
+.tests .c small{display:block; font-weight:400; color:var(--ink-2); font-size:.82rem}
+.tests .res{font-family:var(--f-mono); font-size:.8rem; display:flex; align-items:center; gap:8px; font-variant-numeric:tabular-nums}
+.dots{display:inline-flex; gap:3px}
+.dots i{width:9px; height:9px; border-radius:50%; background:var(--ink)}
+.dots i.off{background:transparent; box-shadow:inset 0 0 0 1.5px var(--ink-2)}
+.pill{justify-self:end; padding:3px 12px; border-radius:999px; font-size:.78rem; font-weight:600; border:1.5px solid var(--ink); background:var(--ink); color:var(--paper); white-space:nowrap}
+.pill.warn{background:transparent; color:var(--warn); border-color:var(--warn)}
+.tests .more{padding:0 0 18px 56px; display:grid; grid-template-columns:minmax(0,1fr) minmax(0,220px); gap:20px; align-items:start}
+.tests .more p{max-width:62ch; color:var(--ink-2)}
+.tests .more img{display:block; width:100%; height:auto; border-radius:6px}
+
+/* reflection */
+.cols3{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:28px}
+.cols3 .item{display:flex; flex-direction:column; gap:8px; border-top:1px solid var(--ink); padding-top:12px}
+.cols3 .item h3{font-size:1.3rem}
+.cols3.imp{grid-template-columns:repeat(2,minmax(0,1fr))}
+
+.foot{border-top:1px solid var(--rule); padding-block:40px 56px; display:flex; flex-wrap:wrap; gap:16px 32px; justify-content:space-between; align-items:center}
+.foot .mail{font-family:var(--f-mono); font-size:.95rem}
+
+@media (max-width:900px){
+  .hero{grid-template-columns:minmax(0,1fr)}
+  .sec{grid-template-columns:minmax(0,1fr); padding-block:48px}
+  .polls,.cols3,.cols3.imp,.two{grid-template-columns:minmax(0,1fr)}
+  .strip{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .panel,.step-body,.fig-row{grid-template-columns:minmax(0,1fr)}
+  .fig-row img{max-width:300px}
+  .steps{grid-template-columns:minmax(0,1fr); gap:20px}
+  .rail{flex-direction:row; overflow-x:auto; padding-bottom:6px}
+  .rail button{flex:none}
+  .tests summary{grid-template-columns:36px minmax(0,1fr) auto; row-gap:6px}
+  .tests summary .res{grid-column:2; grid-row:2}
+  .tests summary .pill{grid-column:3; grid-row:1/3; align-self:center}
+  .tests .more{padding-left:0; grid-template-columns:minmax(0,1fr)}
+  .tests .more img{max-width:240px}
+}
+@media (max-width:520px){
+  .strip{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .dim{padding-right:36px}
+  .dim-w{right:36px}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{transition:none !important; animation:none !important}
+}
+</style>
+
+<div class="wrap">
+
+<header class="top">
+  <span class="mono">Greta Schmedes · Portfolio</span>
+  <nav class="mono" aria-label="Sections">
+    <a href="#brief">Brief</a><a href="#design">Design</a><a href="#try">Try it</a><a href="#build">Build</a><a href="#changes">Changes</a><a href="#tests">Tests</a>
+  </nav>
+</header>
+
+<section class="hero" aria-labelledby="t">
+  <div class="hero-copy">
+    <div class="eyebrow mono"><span class="bars3" aria-hidden="true"><i style="background:var(--ev-hurdle);box-shadow:0 0 0 1px var(--ink-2)"></i><i style="background:var(--ev-high)"></i><i style="background:var(--ev-long)"></i></span>Personal and Cultural Expression</div>
+    <h1 id="t">Medal Holder</h1>
+    <p class="lede">A wall display for an athlete's medals that shows where they come from and what they compete in. Designed in Fusion 360 and cut on a laser cutter.</p>
+    <dl class="facts">
+      <dt>Type</dt><dd>E-portfolio project, Dubai, UAE, 09.2021 to 04.2022</dd>
+      <dt>Client</dt><dd>A German athlete: hurdles, high jump, long jump</dd>
+      <dt>My role</dt><dd>Design, CAD, laser cutting, assembly, testing</dd>
+      <dt>Tools</dt><dd>Autodesk Fusion 360, Tech-soft 2D Design, laser cutter</dd>
+      <dt>Result</dt><dd>55 × 27.5 × 0.9 cm poplar board, 12 bars, holds 72 medals</dd>
+    </dl>
+  </div>
+  <figure style="margin:0">
+    <div class="dim">
+      <div class="dim-w" aria-hidden="true"><span>55 cm</span></div>
+      <img src="DATA_URI" alt="The finished medal holder: a pale wooden board with a black hurdler, a red high jumper and a yellow long jumper above twelve slotted bars." width="756" height="389">
+      <div class="dim-h" aria-hidden="true"><span>27.5 cm</span></div>
+    </div>
+    <figcaption class="cap">As built, measured with a ruler.</figcaption>
+  </figure>
+</section>
+
+<section class="sec" id="brief">
+  <div class="lab mono">Brief</div>
+  <div class="sec-body">
+    <div class="sec-head">
+      <h2>A rack that says something</h2>
+      <p>The client's old holder was a plain metal rack with hooks. Nothing on it said anything about them, and the medals hung on top of each other so most were hidden. They wanted something that shows their country and their sport, and holds every medal at once.</p>
+    </div>
+    <div class="two">
+      <dl class="specs">
+        <dt>Holds</dt><dd>At least 80 medals</dd>
+        <dt>Shows</dt><dd>Country, sport and colours linked to the culture</dd>
+        <dt>Material</dt><dd>Wood, renewable, natural look</dd>
+        <dt>Safety</dt><dd>Smooth edges, hangs steadily on a wall</dd>
+        <dt>Time</dt><dd>Finished within three weeks</dd>
+      </dl>
+      <p class="muted measure">The audience is athletes who train and compete a lot. Athletics suits the project because it is an individual sport with many events, and every medal is something the athlete earned alone.</p>
+    </div>
+
+    <div class="sec-head">
+      <h3>What 13 people said</h3>
+    </div>
+    <div class="polls" id="polls"></div>
+  </div>
+</section>
+
+<section class="sec" id="design">
+  <div class="lab mono">Design</div>
+  <div class="sec-body">
+    <div class="sec-head">
+      <h2>Four designs, one final</h2>
+      <p>I sketched six ideas, developed four, and asked 9 peers and the client to react to each. The final board takes one part from each.</p>
+    </div>
+    <div>
+      <p class="mono" style="margin-bottom:12px">First sketches</p>
+      <div class="strip" id="strip"></div>
+    </div>
+    <div class="tabs" role="tablist" aria-label="Developed designs" id="tabs"></div>
+    <div class="panel" id="panel" role="tabpanel" aria-live="polite"></div>
+  </div>
+</section>
+
+<section class="sec" id="try">
+  <div class="lab mono">Try it</div>
+  <div class="sec-body">
+    <div class="sec-head">
+      <h2>Hang the medals</h2>
+      <p>Pick an event, then tap a bar to hang a medal. Each of the 12 bars holds six. The client sorted medals by event, one group per bar, which is why the bars are separate.</p>
+    </div>
+    <div class="rack-wrap">
+      <div class="rack-ui">
+        <div class="seg" role="radiogroup" aria-label="Event" id="evSeg"></div>
+        <div class="seg" role="group" aria-label="Action">
+          <button class="chip" type="button" id="mAdd" aria-pressed="true">Hang</button>
+          <button class="chip" type="button" id="mRem" aria-pressed="false">Take off</button>
+        </div>
+        <div class="seg">
+          <button class="btn" type="button" id="load">Load 70-medal example</button>
+          <button class="btn ghost" type="button" id="clear">Clear</button>
+        </div>
+      </div>
+      <div class="rack-stage">
+        <svg id="rack" viewBox="0 0 756 520" role="group" aria-label="Medal holder with twelve bars. Use the bars to hang medals.">
+          <image href="DATA_URI" x="0" y="0" width="756" height="389"/>
+          <g id="medals"></g>
+          <g id="hits"></g>
+        </svg>
+      </div>
+      <div class="readout">
+        <div class="big" id="count" aria-hidden="true">0<small> / 72</small></div>
+        <div class="tally" id="tally"></div>
+      </div>
+      <p class="note" id="note" aria-live="polite">Nothing hung yet. The example puts one event on each row, so you can see how the board sorts medals.</p>
+    </div>
+    <div class="fig-row">
+      <img src="DATA_URI" alt="The holder on a wall with 70 medals hanging from it. White and red ribbons cover most of the lower bars." width="640" height="900">
+      <div class="txt">
+        <h3>The real load test</h3>
+        <p class="muted">The client hung all 70 medals. The board held the weight and the layout let them group medals by event. The top and bottom rows showed. The middle row sat behind the ribbons from the row above, so the bars need more space between them.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="build">
+  <div class="lab mono">Build</div>
+  <div class="sec-body">
+    <div class="sec-head">
+      <h2>Ten lessons from file to wall</h2>
+      <p>Pick a lesson to see what I did and what went wrong.</p>
+    </div>
+    <div class="steps">
+      <ol class="rail" id="rail" aria-label="Lessons"></ol>
+      <div class="step-body" id="step" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="changes">
+  <div class="lab mono">Changes</div>
+  <div class="sec-body">
+    <div class="sec-head">
+      <h2>Plan against build</h2>
+      <p>The laser cutter changed the size, the wood, the cutting and the hangers I had already planned. Switch between the two to compare them at the same scale.</p>
+    </div>
+    <div class="pvb" id="pvb" data-state="built">
+      <div class="seg" role="radiogroup" aria-label="Compare">
+        <button class="chip" type="button" role="radio" aria-checked="false" data-s="plan">Plan</button>
+        <button class="chip" type="button" role="radio" aria-checked="true" data-s="built">Built</button>
+      </div>
+      <svg viewBox="0 0 700 330" role="img" aria-label="Rectangles at the same scale: planned board 75 by 35 centimetres, laser bed limit 60 by 30, built board 55 by 27.5.">
+        <rect class="plan-box" x="40" y="36" width="600" height="280"/>
+        <rect class="bed-box" x="40" y="36" width="480" height="240"/>
+        <rect class="built-box" id="builtBox" x="40" y="36" width="440" height="220" rx="6"/>
+        <line class="dimline" x1="40" y1="20" x2="640" y2="20"/><line class="dimline" x1="40" y1="14" x2="40" y2="26"/><line class="dimline" x1="640" y1="14" x2="640" y2="26"/>
+        <text x="340" y="14" text-anchor="middle">75 cm planned</text>
+        <text x="20" y="176" text-anchor="middle" transform="rotate(-90 20 176)">35 cm planned</text>
+        <text x="52" y="56" id="boxLabel">55 × 27.5 cm built</text>
+        <text x="528" y="272" id="bedLabel">60 × 30 cm cutter bed limit</text>
+      </svg>
+      <div class="legend"><span><i></i>Planned, 75 × 35 cm</span><span><i class="bed"></i>Cutter bed limit, 60 × 30 cm</span><span><i class="solid"></i>Built, 55 × 27.5 cm</span></div>
+      <div class="tbl-wrap">
+        <table class="cmp">
+          <thead><tr><th>What</th><th class="plan">Plan</th><th class="built">Built</th><th>Why</th></tr></thead>
+          <tbody id="cmp"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="tests">
+  <div class="lab mono">Tests</div>
+  <div class="sec-body">
+    <div class="sec-head">
+      <h2>Ten criteria, tested</h2>
+      <p>I set pass marks before building, then tested each with the client or with 7 people. Open a row for what happened.</p>
+    </div>
+    <div class="test-bar">
+      <div class="score" id="score">8 <small>of 10 passed</small></div>
+      <div class="seg" role="group" aria-label="Filter tests" id="filters"></div>
+    </div>
+    <ul class="tests" id="tests-list"></ul>
+  </div>
+</section>
+
+<section class="sec" id="next">
+  <div class="lab mono">Reflection</div>
+  <div class="sec-body">
+    <div class="sec-head"><h2>What I would change</h2></div>
+    <div class="cols3 imp" id="improve"></div>
+    <div class="sec-head" style="margin-top:16px"><h3>What I take into UI/UX work</h3></div>
+    <div class="cols3" id="takeaways"></div>
+  </div>
+</section>
+
+<footer class="foot">
+  <div>
+    <p class="mono">Let's connect</p>
+    <p class="mail" id="mail">gschmedes1@gmail.com</p>
+  </div>
+  <button class="btn ghost" type="button" id="copy">Copy email</button>
+</footer>
+
+</div>
+
+<script>
+(function(){
+  var IMG = {"11": "DATA_URI", "12": "DATA_URI", "13": "DATA_URI", "14": "DATA_URI", "15": "DATA_URI", "16": "DATA_URI", "21": "DATA_URI", "26": "DATA_URI", "31": "DATA_URI", "36": "DATA_URI", "47": "DATA_URI", "58": "DATA_URI", "59": "DATA_URI", "60": "DATA_URI", "49": "DATA_URI", "61": "DATA_URI", "62": "DATA_URI", "63": "DATA_URI", "64": "DATA_URI", "65": "DATA_URI", "66": "DATA_URI", "67": "DATA_URI", "77": "DATA_URI"};
+  var $ = function(s,r){return (r||document).querySelector(s)};
+  var el = function(tag,attrs,html){var e=document.createElement(tag); if(attrs){for(var k in attrs){e.setAttribute(k,attrs[k])}} if(html!==undefined){e.innerHTML=html} return e};
+
+  /* ---------- polls ---------- */
+  var POLLS=[
+    {q:'Bars or hooks?',rows:[['Bars',7,1],['Hooks',6,0]]},
+    {q:'Wood or metal?',rows:[['Wood',8,1],['Metal',5,0]]},
+    {q:'What makes it personal and cultural? Pick three.',rows:[['Country of nationality',9,1],['Type of sport',9,1],['Colour patterns',6,0],['Inspirational quotes',5,0],['Name',1,0]]}
+  ];
+  var polls=$('#polls');
+  POLLS.forEach(function(p){
+    var d=el('div',{'class':'poll'},'<h3>'+p.q+'</h3>');
+    p.rows.forEach(function(r){
+      d.appendChild(el('div',{'class':'row'+(r[2]?' win':'')},
+        '<span class="lbl">'+r[0]+'</span><span class="n">'+r[1]+' / 13</span><span class="bar"><i style="width:'+(r[1]/13*100).toFixed(1)+'%"></i></span>'));
+    });
+    polls.appendChild(d);
+  });
+
+  /* ---------- sketches ---------- */
+  var SK=[[11,'Shape of Germany with the flag colours, and the word Athletics'],[12,'Eagle and a flag-coloured A'],[13,'Bubble letters over flag-striped bars'],[14,'Germany in flag colours above the bars'],[15,'Running-track shape with a runner'],[16,'Stickmen with the word Germany']];
+  var strip=$('#strip');
+  SK.forEach(function(s){
+    var f=el('figure',null,'<img alt="Sketch: '+s[1]+'" src="'+IMG[s[0]]+'" loading="lazy"><figcaption>'+s[1]+'</figcaption>');
+    strip.appendChild(f);
+  });
+
+  /* ---------- design explorer ---------- */
+  var DES=[
+    {k:'Design 1',img:21,alt:'Design 1 drawing: a plain rectangular board with a flag-coloured Germany shape and the word Athletics.',
+     tried:'A plain rectangle with a Germany-shaped flag and the word Athletics in thin script. Red oak.',
+     client:'Liked how simple it is. Found it too empty and thought the long bars would sag in the middle.',
+     spec:22,peer:11.1,took:'The rectangular shape. No curves to cut.'},
+    {k:'Design 2',img:26,alt:'Design 2 drawing: a board with a wavy top edge and raised letters spelling Germany in flag colours.',
+     tried:'Raised letters spelling Germany in flag colours on a curved top edge, with Athletics below. White oak.',
+     client:'Liked that the bar layout looked stable and could sort events. Wanted Germany built into the board, not glued on.',
+     spec:23,peer:66.7,took:'The wood choice. It was white oak at this stage and became poplar for the laser cutter.'},
+    {k:'Design 3',img:31,alt:'Design 3 drawing: a rectangular board with small stickman figures around the word Germany.',
+     tried:'Small stickmen around the word Germany. Hard maple, with long bars.',
+     client:'Loved the stickmen, including the one jumping over the Y. Found the bars unstable and the corners sharp.',
+     spec:23,peer:11.1,took:'The stickmen. I made them bigger and gave each one an event.'},
+    {k:'Design 4',img:36,alt:'Design 4 drawing: a dark board with an eagle and the word Athletics with a flag-coloured A.',
+     tried:'An eagle, and an Athletics with a flag-coloured A. Dark walnut, bars in short stacks.',
+     client:'Liked the eagle idea. The dark wood felt too heavy for their room.',
+     spec:20,peer:11.1,took:'The bar layout. Short bars carry more weight and look tidier.'},
+    {k:'Final',img:47,alt:'CAD render of the final design: a light wooden board with a black hurdler, a red high jumper and a yellow long jumper above twelve slotted bars.',
+     tried:'Three stickmen, one per event: hurdles in black, high jump in red, long jump in yellow. Together they carry the German flag colours and the sport at once. Light wood, twelve short bars.',
+     client:null,spec:null,peer:null,took:null}
+  ];
+  var tabs=$('#tabs'), panel=$('#panel'), cur=0;
+  DES.forEach(function(d,i){
+    var b=el('button',{'class':'tab',type:'button',role:'tab',id:'tab'+i,'aria-controls':'panel'},d.k);
+    b.addEventListener('click',function(){pick(i,true)});
+    b.addEventListener('keydown',function(e){
+      var n=null;
+      if(e.key==='ArrowRight')n=(cur+1)%DES.length; else if(e.key==='ArrowLeft')n=(cur+DES.length-1)%DES.length;
+      if(n!==null){e.preventDefault(); pick(n,true)}
+    });
+    tabs.appendChild(b);
+  });
+  function meter(label,val,max,txt){
+    return '<div class="meter-row"><span class="mono">'+label+'</span><span class="mono" style="color:var(--ink)">'+txt+'</span><span class="meter"><i style="width:'+(val/max*100).toFixed(1)+'%"></i></span></div>';
+  }
+  function pick(i,focus){
+    cur=i; var d=DES[i];
+    Array.prototype.forEach.call(tabs.children,function(b,j){
+      b.setAttribute('aria-selected',j===i?'true':'false'); b.tabIndex=(j===i)?0:-1;
+      if(j===i&&focus)b.focus();
+    });
+    panel.setAttribute('aria-labelledby','tab'+i);
+    var h='<div class="shot"><img src="'+IMG[d.img]+'" alt="'+d.alt+'"></div><div class="info">';
+    h+='<div class="kv"><span class="mono">What it tried</span><p>'+d.tried+'</p></div>';
+    if(d.client){
+      h+='<div class="kv"><span class="mono">What the client said</span><p>'+d.client+'</p></div>';
+      h+=meter('Specification score',d.spec,28,d.spec+' / 28');
+      h+=meter('Peer votes for favourite',d.peer,100,d.peer+'%');
+      h+='<div class="took"><span class="mono">Taken into the final</span><p><strong>'+d.took+'</strong></p></div>';
+    } else {
+      h+='<div class="kv"><span class="mono">Where each part came from</span></div><div class="recipe">'
+        +'<button type="button" data-g="0"><b>Shape</b> from Design 1</button>'
+        +'<button type="button" data-g="1"><b>Wood</b> from Design 2</button>'
+        +'<button type="button" data-g="2"><b>Stickmen</b> from Design 3</button>'
+        +'<button type="button" data-g="3"><b>Bars</b> from Design 4</button></div>'
+        +'<p class="muted">The four designs scored 22, 23, 23 and 20 out of 28 against my specification, so none won on points. Taking the strongest part of each did.</p>';
+    }
+    h+='</div>';
+    panel.innerHTML=h;
+    Array.prototype.forEach.call(panel.querySelectorAll('.recipe button'),function(b){
+      b.addEventListener('click',function(){pick(+b.getAttribute('data-g'),true)});
+    });
+  }
+  pick(DES.length-1,false);
+
+  /* ---------- rack ---------- */
+  var COLS=[[30,190],[218,376],[402,553],[578,728]];
+  var ROWS=[[257,284],[306,333],[355,382]];
+  var EV=[{n:'Hurdles',c:'#17181B'},{n:'High jump',c:'#D7262B'},{n:'Long jump',c:'#F2B705'}];
+  var DISC=['#D8B24C','#CBCFD4','#C98A52'], CAP=6, MAXALL=72;
+  var bars=[],sel=0,mode='add';
+  for(var i=0;i<12;i++)bars.push([]);
+  var NS='http://www.w3.org/2000/svg';
+  var gM=$('#medals'), gH=$('#hits');
+  function s(tag,attrs){var e=document.createElementNS(NS,tag); for(var k in attrs)e.setAttribute(k,attrs[k]); return e}
+
+  var evSeg=$('#evSeg');
+  EV.forEach(function(e,i){
+    var b=el('button',{'class':'chip',type:'button',role:'radio','aria-checked':i===sel?'true':'false'},'<span class="sw" style="--c:'+e.c+'"></span>'+e.n);
+    b.addEventListener('click',function(){
+      sel=i; Array.prototype.forEach.call(evSeg.children,function(x,j){x.setAttribute('aria-checked',j===i?'true':'false')});
+    });
+    evSeg.appendChild(b);
+  });
+  function setMode(m){mode=m; $('#mAdd').setAttribute('aria-pressed',m==='add'); $('#mRem').setAttribute('aria-pressed',m==='rem')}
+  $('#mAdd').addEventListener('click',function(){setMode('add')});
+  $('#mRem').addEventListener('click',function(){setMode('rem')});
+
+  var hitEls=[];
+  ROWS.forEach(function(r,ri){
+    COLS.forEach(function(c,ci){
+      var k=ri*4+ci;
+      var h=s('rect',{'class':'hit',x:c[0]-2,y:r[0]-6,width:c[1]-c[0]+4,height:r[1]-r[0]+12,rx:4,tabindex:0,role:'button'});
+      h.addEventListener('click',function(){act(k)});
+      h.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();act(k)}});
+      gH.appendChild(h); hitEls.push(h);
+    });
+  });
+
+  var msg='';
+  function act(k){
+    var b=bars[k];
+    if(mode==='add'){
+      if(b.length>=CAP){msg='That bar is full. Each bar holds six medals.'}
+      else{b.push(sel); msg=''}
+    } else {
+      if(b.length){b.pop(); msg=''} else {msg='Nothing on that bar.'}
+    }
+    render();
+  }
+  function render(){
+    while(gM.firstChild)gM.removeChild(gM.firstChild);
+    var total=0, tally=[0,0,0];
+    for(var ri=2;ri>=0;ri--){
+      for(var ci=0;ci<4;ci++){
+        var k=ri*4+ci, b=bars[k], c=COLS[ci], r=ROWS[ri];
+        var cy=(r[0]+r[1])/2, rw=20, gap=((c[1]-c[0])-CAP*rw)/(CAP-1), discY=cy+118;
+        b.forEach(function(e,i){
+          var x=c[0]+i*(rw+gap);
+          gM.appendChild(s('rect',{x:x,y:cy-8,width:rw,height:discY-cy+8,fill:EV[e].c,stroke:'rgba(0,0,0,.35)','stroke-width':1}));
+          gM.appendChild(s('rect',{x:x+rw/2-1,y:cy-8,width:2,height:discY-cy+8,fill:'rgba(255,255,255,.55)'}));
+          gM.appendChild(s('circle',{cx:x+rw/2,cy:discY,r:11,fill:DISC[(k+i)%3],stroke:'rgba(0,0,0,.45)','stroke-width':1.2}));
+          gM.appendChild(s('circle',{cx:x+rw/2,cy:discY,r:5.5,fill:'none',stroke:'rgba(0,0,0,.3)','stroke-width':1}));
+        });
+      }
+    }
+    bars.forEach(function(b,k){
+      total+=b.length; b.forEach(function(e){tally[e]++});
+      var h=hitEls[k];
+      h.setAttribute('aria-label','Row '+(Math.floor(k/4)+1)+', bar '+(k%4+1)+', '+b.length+' of '+CAP+' medals');
+      h.setAttribute('class','hit'+(b.length>=CAP?' full':''));
+    });
+    $('#count').innerHTML=total+'<small> / '+MAXALL+'</small>';
+    $('#tally').innerHTML=EV.map(function(e,i){return '<span><i class="sw" style="--c:'+e.c+'"></i>'+e.n+' <b>'+tally[i]+'</b></span>'}).join('');
+    var note=msg;
+    if(!note){
+      if(total===0)note='Nothing hung yet. The example puts one event on each row, so you can see how the board sorts medals.';
+      else if(total>=MAXALL)note='Full: 12 bars with 6 medals each. The client recommended stopping at 72 so it does not look crowded.';
+      else if(total>=24)note='The ribbons now cover the lower bars. In the real test the middle row was hidden this way, so wider gaps between bars are on my list.';
+      else note=total+' hung. Keep going, or load the 70-medal example.';
+    }
+    $('#note').textContent=note;
+  }
+  $('#clear').addEventListener('click',function(){bars=bars.map(function(){return []}); msg=''; render()});
+  $('#load').addEventListener('click',function(){
+    bars=[];
+    for(var ri=0;ri<3;ri++)for(var ci=0;ci<4;ci++){
+      var n=(ri===0&&(ci===1||ci===2))?5:6, a=[];
+      for(var i=0;i<n;i++)a.push(ri);
+      bars.push(a);
+    }
+    msg=''; render();
+  });
+  render();
+
+  /* ---------- build stepper ---------- */
+  var LES=[
+    {t:'Prep from home',p:'Covid-19 kept me on distance learning for two weeks. I learned the school had a laser cutter and researched how it works, then wrote down which parts of the design to cut and which to burn.',snag:null,imgs:[]},
+    {t:'Check the model fits',p:'I went back to the Fusion 360 model to check its size. I did not know which cutter the school had, so I left the measurements alone and used the lesson to improve my Criterion A and B drafts.',snag:'The cutter size was still unknown, so the size problem stayed hidden.',imgs:[[58,'The Fusion 360 model at its planned size']]},
+    {t:'Work through feedback',p:'I highlighted the most important sentences on the feedback sheet and fixed Criterion A first, then B. I did not get through every correction.',snag:null,imgs:[]},
+    {t:'Resize for the machine',p:'I measured the cutter with a ruler. The largest sheet that fits is 55 × 25 cm, so the 75 × 35 cm design had to shrink. I recalculated every bar gap so all bars stayed equal and redrew the stickmen smaller. Then I moved the design onto a Fusion 360 drawing sheet so only clean cut lines were left.',snag:'The plan assumed 75 × 35 cm.',imgs:[[59,'Drawing sheet with only the cut lines']]},
+    {t:'First export fails',p:'I took a screenshot, saved it as a PDF and opened that in Tech-soft 2D Design. The lines did not match the design and I spent the whole lesson lining them up by hand. I asked for help and learned that other file types skip this step.',snag:'A whole lesson went on a file type that did not work.',imgs:[[60,'The school laser cutter']]},
+    {t:'Export as DXF',p:'Fusion 360 offered six formats the cutter software accepts: WMF, EMF, DXF, HPGL, Acorn Draw and Designer V3. I exported a DXF onto a USB stick. In Tech-soft 2D Design every line came in and lined up exactly.',snag:null,imgs:[[49,'Technical drawing sheet exported from Fusion 360']]},
+    {t:'Set up the cut',p:'Colour sets the job. Red lines cut through and black lines burn. The thin hurdle bar and the high-jump bar and poles are black because they are too thin to cut. A cut takes about two minutes. The machine only cuts 3 mm sheets, so I cut the board three times. The two extra layers have no figure cut-outs, which leaves a solid surface to glue the figures onto.',snag:'I learned the 3 mm limit late. It turned one 1 cm cut into three layers.',imgs:[[61,'Laser settings screen'],[62,'The first cut on the bed']],table:true},
+    {t:'Paint the figures',p:'I painted the hurdler black, the high jumper red and the long jumper yellow. One coat each, so the grain of the wood still shows through. They dried while I worked on the write-up.',snag:null,imgs:[[63,'The three painted figures']]},
+    {t:'Glue it up',p:'I glued the three layers with wood glue under heavy weights until no gaps were left, which gives 9 mm. Then I glued the figures in so they sit flush like puzzle pieces. Glue squeezed out around their sharp edges and I cleaned it off with a sharp pencil.',snag:'Gluing was not in my production plan, so it had to be added.',imgs:[[64,'Layers glued, figure holes empty'],[65,'Figures glued in']]},
+    {t:'Strips and hangers',p:'I cut two 30 cm softwood strips and screwed a D-ring hanger (HP-156, rated 4.5 kg) to each end of one of them, then glued both strips to the back. The gap behind the board lets ribbons hang freely. I had planned keyhole hangers. D-rings are easier to fit and hold enough.',snag:null,imgs:[[66,'Two softwood strips on the back'],[67,'D-ring hanger screwed to a strip']]}
+  ];
+  var rail=$('#rail'), stepEl=$('#step'), si=0;
+  LES.forEach(function(l,i){
+    var li=el('li'); var b=el('button',{type:'button','aria-label':'Lesson '+(i+1)+': '+l.t},String(i+1));
+    b.addEventListener('click',function(){showStep(i,false)});
+    li.appendChild(b); rail.appendChild(li);
+  });
+  function showStep(i,noscroll){
+    si=i; var l=LES[i];
+    Array.prototype.forEach.call(rail.querySelectorAll('button'),function(b,j){
+      if(j===i)b.setAttribute('aria-current','step'); else b.removeAttribute('aria-current');
+    });
+    var h='<div class="step-text"><span class="mono">Lesson '+(i+1)+' of '+LES.length+'</span><h3>'+l.t+'</h3><p>'+l.p+'</p>';
+    if(l.table){
+      h+='<table class="settings"><thead><tr><th>3 mm poplar</th><th>Power</th><th>Speed</th><th>PPI</th></tr></thead><tbody><tr><td>Cutting</td><td>80</td><td>10</td><td>650</td></tr><tr><td>Etching</td><td>60</td><td>40</td><td>550</td></tr></tbody></table>';
+    }
+    if(l.snag)h+='<div class="snag"><span class="mono">What went wrong</span><p>'+l.snag+'</p></div>';
+    h+='<div class="step-nav"><button class="btn ghost" type="button" id="prev"'+(i===0?' disabled style="opacity:.4;cursor:default"':'')+'>Previous</button><button class="btn" type="button" id="next"'+(i===LES.length-1?' disabled style="opacity:.4;cursor:default"':'')+'>Next</button></div></div>';
+    h+='<div class="step-imgs">';
+    if(l.imgs.length){l.imgs.forEach(function(m){h+='<figure><img src="'+IMG[m[0]]+'" alt="'+m[1]+'"><figcaption>'+m[1]+'</figcaption></figure>'})}
+    else h+='<div class="noimg">Desk work this lesson, so there is no photo.</div>';
+    h+='</div>';
+    stepEl.innerHTML=h;
+    var p=$('#prev'),n=$('#next');
+    if(p)p.addEventListener('click',function(){if(si>0)showStep(si-1,true)});
+    if(n)n.addEventListener('click',function(){if(si<LES.length-1)showStep(si+1,true)});
+  }
+  showStep(0,true);
+
+  /* ---------- plan vs built ---------- */
+  var CMP=[
+    ['Size','75 × 35 × 1.5 cm','55 × 27.5 × 0.9 cm','The cutter bed takes 60 × 30 cm at most. I drew 55 × 25 cm and the finished board measured 2.5 cm taller.'],
+    ['Wood','White oak','Poplar, 3 mm sheets','The laser settings I was given were for 3 mm poplar.'],
+    ['Cutting','One 1 cm cut','Three 3 mm layers glued to 9 mm','3 mm is the most the machine cuts through, so I added a glue step and a glue clean-up step.'],
+    ['Hangers','Keyhole hangers, 4 screws','2 D-ring hangers (HP-156) on a softwood strip','Easier to fit and rated for 4.5 kg, more than 72 medals need.'],
+    ['Capacity','At least 80 medals','72 medals, about 80 packed tight','I recommended 72 so the board does not look crowded.']
+  ];
+  $('#cmp').innerHTML=CMP.map(function(r){return '<tr><td>'+r[0]+'</td><td class="plan">'+r[1]+'</td><td class="built">'+r[2]+'</td><td>'+r[3]+'</td></tr>'}).join('');
+  var pvb=$('#pvb'), box=$('#builtBox'), boxLabel=$('#boxLabel');
+  function setState(st){
+    pvb.setAttribute('data-state',st);
+    Array.prototype.forEach.call(pvb.querySelectorAll('.chip'),function(b){b.setAttribute('aria-checked',b.getAttribute('data-s')===st?'true':'false')});
+    if(st==='plan'){box.setAttribute('width',600);box.setAttribute('height',280);boxLabel.textContent='75 × 35 cm planned'}
+    else{box.setAttribute('width',440);box.setAttribute('height',220);boxLabel.textContent='55 × 27.5 cm built'}
+  }
+  Array.prototype.forEach.call(pvb.querySelectorAll('.chip'),function(b){b.addEventListener('click',function(){setState(b.getAttribute('data-s'))})});
+  setState('built');
+
+  /* ---------- tests ---------- */
+  var T=[
+    {c:'Medals go on and come off easily',m:'Expert appraisal, the client',ok:1,res:'Client approved',d:'It took a few minutes to find the trick: stretch the ribbon, use two fingers and lead it behind the bar. The client found taking medals off even easier than hanging them.',img:77,alt:'A hand feeding a medal ribbon behind a bar'},
+    {c:'It suits the bedroom',m:'Field trial',ok:1,res:'Client approved',d:'The room is mostly white with little on the walls, so I chose light wood and kept strong colour to the three figures. The client hung it and said it suits the room.'},
+    {c:'The three stickmen are clear',m:'User trial, 7 people',ok:1,dots:[7,7],d:'High jump and long jump were obvious. Hurdles took a while until I gave the hint that it relates to athletics. All 7 got there.'},
+    {c:'Most medals stay visible',m:'Load test, 70 medals',ok:0,res:'Middle row hidden',d:'The top and bottom rows showed. The middle row sat behind the ribbons from the row above. The bars need to sit further apart.'},
+    {c:'It links to personal and cultural expression',m:'User trial, 7 people',ok:1,dots:[5,7],d:'Two people wanted more that points to athletics and to Germany.'},
+    {c:'Its purpose is clear without explanation',m:'Survey, 7 people',ok:1,dots:[5,7],d:'Two people had no idea what it was. Five worked out it holds medals.'},
+    {c:'Size is 55 × 25 × 0.9 cm',m:'Measured with a ruler',ok:0,res:'27.5 cm tall',d:'Length and thickness matched. The height came out 2.5 cm over. Either the Fusion 360 model or Tech-soft 2D Design changed it and I did not notice before cutting.'},
+    {c:'The wood is smooth and natural',m:'Survey, 7 people',ok:1,dots:[7,7],d:'All 7 said the wood looks natural and feels smooth.'},
+    {c:'It holds 70 medals',m:'Load test, 70 medals',ok:1,res:'Held 70',d:'The client hung 70 medals and pressed on each bar with two fingers. Nothing gave, and there is room for two more. It could take about 80 if packed tight, but I recommended 72.'},
+    {c:'It looks good and fits the global context',m:'User trial, 7 people',ok:1,dots:[6,7],d:'Six said yes. One found it too plain and wanted more of the flag colours.'}
+  ];
+  var list=$('#tests-list'), filt='all';
+  T.forEach(function(t,i){
+    var li=el('li'); li.setAttribute('data-ok',t.ok);
+    var res='';
+    if(t.dots){var dd='';for(var j=0;j<t.dots[1];j++)dd+='<i'+(j<t.dots[0]?'':' class="off"')+'></i>'; res='<span class="dots" aria-hidden="true">'+dd+'</span>'+t.dots[0]+'/'+t.dots[1]}
+    else res=t.res;
+    var more='<div class="more"><p>'+t.d+'</p>'+(t.img?'<img src="'+IMG[t.img]+'" alt="'+t.alt+'">':'')+'</div>';
+    li.innerHTML='<details><summary><span class="id">T'+(i+1)+'</span><span class="c">'+t.c+'<small>'+t.m+'</small></span><span class="res">'+res+'</span><span class="pill'+(t.ok?'':' warn')+'">'+(t.ok?'Passed':'Needs work')+'</span></summary>'+more+'</details>';
+    list.appendChild(li);
+  });
+  var FIL=[['all','All 10'],['1','Passed 8'],['0','Needs work 2']];
+  var fBox=$('#filters');
+  FIL.forEach(function(f){
+    var b=el('button',{'class':'chip',type:'button','aria-pressed':f[0]==='all'?'true':'false','data-f':f[0]},f[1]);
+    b.addEventListener('click',function(){
+      filt=f[0];
+      Array.prototype.forEach.call(fBox.children,function(x){x.setAttribute('aria-pressed',x===b?'true':'false')});
+      Array.prototype.forEach.call(list.children,function(li){li.hidden=(filt!=='all'&&li.getAttribute('data-ok')!==filt)});
+    });
+    fBox.appendChild(b);
+  });
+
+  /* ---------- reflection ---------- */
+  var IMP=[
+    ['Wider gaps between bars','Moving the bars further apart would let the middle row show, which is the main thing the load test found.'],
+    ['Colour the layers','The board has three layers, so I would colour their edges black, red and yellow. The sides would carry the flag as well, and I would add Athletics on one edge and Germany on the other.'],
+    ['Check size in the cutter software','The height grew by 2.5 cm between the CAD file and the cut. Next time I would measure the design inside Tech-soft 2D Design before pressing start.'],
+    ['Tone down the burn marks','The burned lines on the board are more visible than I wanted. Adjusting the burn settings would make it look cleaner.']
+  ];
+  $('#improve').innerHTML=IMP.map(function(x){return '<div class="item"><h3>'+x[0]+'</h3><p class="muted">'+x[1]+'</p></div>'}).join('');
+  var TAKE=[
+    ['Set pass marks first','I wrote ten success criteria before building and tested each one. In UI work the same habit keeps a design review from turning into opinions.'],
+    ['Check hard limits early','The cutter size and the 3 mm limit arrived mid-project and reshaped the plan. In digital work the equivalents are screen sizes and technical limits.'],
+    ['Let feedback decide','The client and peer reactions set the final design: too dark, bars too long, stickmen loved. I kept what people responded to and dropped the rest.']
+  ];
+  $('#takeaways').innerHTML=TAKE.map(function(x){return '<div class="item"><h3>'+x[0]+'</h3><p class="muted">'+x[1]+'</p></div>'}).join('');
+
+  /* ---------- copy email ---------- */
+  $('#copy').addEventListener('click',function(){
+    var btn=this, node=$('#mail');
+    function fallback(){var r=document.createRange(); r.selectNodeContents(node); var sl=window.getSelection(); sl.removeAllRanges(); sl.addRange(r); btn.textContent='Selected'}
+    try{
+      navigator.clipboard.writeText(node.textContent).then(function(){btn.textContent='Copied'},fallback);
+    }catch(e){fallback()}
+    setTimeout(function(){btn.textContent='Copy email'},2000);
+  });
+})();
+</script>
+
+</body></html>

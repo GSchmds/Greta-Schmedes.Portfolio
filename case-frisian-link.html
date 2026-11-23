@@ -1,0 +1,648 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Frisian Link</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Layout: a drawing sheet. Section labels sit in a narrow left column like title-block cells, content runs to the right.
+     Boldness lives in one place: the black / red / yellow event colours from the stickman figures. Everything else stays quiet. */
+  --paper:#F3F4F1; --paper-2:#E8EAE4; --ink:#14161A; --ink-2:#4B5058; --rule:#C8CCC4;
+  --ev-hurdle:#17181B; --ev-high:#D7262B; --ev-long:#F2B705;
+  --warn:#B81D23; --focus:#1F5FD6;
+  --f-display:'Barlow Condensed','Arial Narrow',Arial,sans-serif;
+  --f-body:'IBM Plex Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --f-mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#111316; --paper-2:#1A1D21; --ink:#EDECE8; --ink-2:#A7AAAF; --rule:#2C3036;
+    --warn:#FF7378; --focus:#8DB1FF; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#111316; --paper-2:#1A1D21; --ink:#EDECE8; --ink-2:#A7AAAF; --rule:#2C3036;
+  --warn:#FF7378; --focus:#8DB1FF; color-scheme:dark;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:var(--f-body); font-size:16px; line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:0;
+}
+.wrap{max-width:1120px; margin:0 auto}
+img,svg{max-width:100%}
+a{color:inherit}
+button{font:inherit; color:inherit}
+:focus-visible{outline:2px solid var(--focus); outline-offset:2px}
+h1,h2,h3{font-family:var(--f-display); font-weight:700; line-height:.98; margin:0; text-wrap:balance; text-transform:uppercase; letter-spacing:.01em}
+h1{font-size:clamp(3.4rem,13vw,7.5rem)}
+h2{font-size:clamp(2rem,5.2vw,3.1rem)}
+h3{font-size:1.45rem; letter-spacing:.03em}
+p{margin:0}
+.mono{font-family:var(--f-mono); font-size:.75rem; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-2)}
+.muted{color:var(--ink-2)}
+.measure{max-width:65ch}
+
+/* top strip */
+.top{display:flex; flex-wrap:wrap; gap:8px 24px; justify-content:space-between; align-items:center; padding-block:20px; border-bottom:1px solid var(--rule)}
+.top nav{display:flex; flex-wrap:wrap; gap:4px 20px}
+.top a{text-decoration:none}
+.top a:hover{text-decoration:underline}
+
+/* hero */
+.hero{display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,1fr); gap:40px 56px; align-items:end; padding-block:56px 64px}
+.hero-copy{display:flex; flex-direction:column; gap:24px; min-width:0}
+.eyebrow{display:flex; align-items:center; gap:10px}
+.bars3{display:inline-flex; gap:4px}
+.bars3 i{display:block; width:22px; height:8px; border-radius:2px}
+.lede{font-size:1.18rem; max-width:34ch}
+.facts{display:grid; grid-template-columns:auto minmax(0,1fr); gap:6px 20px; margin:8px 0 0; font-size:.92rem}
+.facts dt{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-2); padding-top:3px}
+.facts dd{margin:0}
+
+.dim{position:relative; padding:34px 44px 0 0; min-width:0}
+.dim img{display:block; width:100%; height:auto; border-radius:8px}
+.dim-w,.dim-h{position:absolute; display:flex; align-items:center; gap:10px; color:var(--ink-2); font-family:var(--f-mono); font-size:.72rem; letter-spacing:.06em; white-space:nowrap}
+.dim-w{top:4px; left:0; right:44px; height:14px; border-left:1px solid; border-right:1px solid}
+.dim-w::before,.dim-w::after{content:""; flex:1; height:1px; background:currentColor}
+.dim-w span{padding:0 2px}
+.dim-h{top:34px; bottom:0; right:6px; width:14px; flex-direction:column; border-top:1px solid; border-bottom:1px solid}
+.dim-h::before,.dim-h::after{content:""; flex:1; width:1px; background:currentColor}
+.dim-h span{writing-mode:vertical-rl; padding:2px 0}
+.cap{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.06em; color:var(--ink-2); margin-top:12px}
+
+/* sections */
+.sec{display:grid; grid-template-columns:minmax(0,170px) minmax(0,1fr); gap:20px 40px; padding-block:64px; border-top:1px solid var(--rule)}
+.sec>.lab{padding-top:6px}
+.sec-body{min-width:0; display:flex; flex-direction:column; gap:32px}
+.sec-head{display:flex; flex-direction:column; gap:14px}
+.sec-head p{max-width:62ch}
+
+.two{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:32px}
+.specs{display:grid; grid-template-columns:auto minmax(0,1fr); gap:10px 20px; margin:0}
+.specs dt{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-2); padding-top:4px}
+.specs dd{margin:0}
+
+/* polls */
+.polls{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:28px}
+.poll{display:flex; flex-direction:column; gap:14px; min-width:0}
+.poll h3{font-size:1.25rem}
+.poll .row{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:4px 12px; align-items:center; font-size:.9rem}
+.poll .row .bar{grid-column:1/-1; height:10px; background:var(--paper-2); border-radius:2px; overflow:hidden}
+.poll .row .bar i{display:block; height:100%; background:var(--ink-2)}
+.poll .row.win .bar i{background:var(--ink)}
+.poll .row.win .lbl{font-weight:600}
+.poll .n{font-family:var(--f-mono); font-size:.8rem; font-variant-numeric:tabular-nums}
+
+/* sketch strip */
+.strip{display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:14px}
+.strip figure{margin:0; display:flex; flex-direction:column; gap:8px; min-width:0}
+.strip img{width:100%; aspect-ratio:1/0.85; object-fit:contain; background:#fff; border-radius:6px; border:1px solid var(--rule)}
+.strip figcaption{font-size:.8rem; line-height:1.35; color:var(--ink-2)}
+
+/* tabs */
+.tabs{display:flex; flex-wrap:wrap; gap:8px}
+.tab{padding:7px 16px; border:1px solid var(--rule); background:transparent; border-radius:4px; cursor:pointer; font-family:var(--f-display); font-weight:600; font-size:1.1rem; letter-spacing:.05em; text-transform:uppercase}
+.tab:hover{border-color:var(--ink-2)}
+.tab[aria-selected="true"]{background:var(--ink); color:var(--paper); border-color:var(--ink)}
+.panel{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:32px; align-items:start}
+.panel .shot{background:#fff; border-radius:8px; border:1px solid var(--rule); padding:10px}
+.panel .shot img{display:block; width:100%; height:auto; border-radius:4px}
+.panel .info{display:flex; flex-direction:column; gap:18px; min-width:0}
+.kv{display:flex; flex-direction:column; gap:4px}
+.kv p{max-width:52ch}
+.meter-row{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:6px 12px; align-items:center}
+.meter{height:8px; background:var(--paper-2); border-radius:2px; overflow:hidden; grid-column:1/-1; order:2}
+.meter i{display:block; height:100%; background:var(--ink)}
+.took{border-top:1px solid var(--ink); padding-top:12px}
+.took strong{font-weight:600}
+.recipe{display:flex; flex-wrap:wrap; gap:8px}
+.recipe button{border:1px solid var(--rule); background:transparent; border-radius:999px; padding:6px 14px; cursor:pointer; font-size:.88rem}
+.recipe button:hover{border-color:var(--ink)}
+.recipe b{font-weight:600}
+
+/* rack */
+.rack-wrap{display:grid; grid-template-columns:minmax(0,1fr); gap:20px}
+.rack-ui{display:flex; flex-wrap:wrap; gap:14px 24px; align-items:center}
+.seg{display:inline-flex; flex-wrap:wrap; gap:8px}
+.chip{display:inline-flex; align-items:center; gap:8px; padding:8px 14px; border:1.5px solid var(--rule); background:transparent; border-radius:999px; cursor:pointer; font-size:.9rem; font-weight:500}
+.chip:hover{border-color:var(--ink-2)}
+.chip[aria-checked="true"],.chip[aria-pressed="true"]{border-color:var(--ink); background:var(--paper-2)}
+.sw{width:14px; height:14px; border-radius:50%; background:var(--c); box-shadow:0 0 0 1px var(--ink-2); flex:none}
+.btn{padding:8px 16px; border:1.5px solid var(--ink); background:var(--ink); color:var(--paper); border-radius:4px; cursor:pointer; font-weight:500; font-size:.9rem}
+.btn.ghost{background:transparent; color:var(--ink)}
+.btn:hover{opacity:.88}
+.rack-stage{background:var(--paper-2); border-radius:8px; padding:16px; min-width:0}
+.rack-stage svg{display:block; width:100%; height:auto; touch-action:manipulation}
+.rack-stage .hit{fill:transparent; cursor:pointer}
+.rack-stage .hit:hover{fill:rgba(20,22,26,.12)}
+.rack-stage .hit:focus-visible{outline:none; stroke:var(--focus); stroke-width:3}
+.rack-stage .full{stroke:var(--ink); stroke-width:2}
+.readout{display:flex; flex-wrap:wrap; gap:8px 28px; align-items:baseline}
+.readout .big{font-family:var(--f-display); font-weight:700; font-size:2.4rem; line-height:1; font-variant-numeric:tabular-nums}
+.readout .big small{font-size:1.1rem; color:var(--ink-2); font-weight:600}
+.tally{display:flex; flex-wrap:wrap; gap:6px 18px; font-family:var(--f-mono); font-size:.78rem; color:var(--ink-2)}
+.tally span{display:inline-flex; align-items:center; gap:6px}
+.tally b{font-weight:500; color:var(--ink); font-variant-numeric:tabular-nums}
+.note{min-height:3.2em; max-width:68ch; color:var(--ink-2); font-size:.95rem}
+.fig-row{display:grid; grid-template-columns:minmax(0,260px) minmax(0,1fr); gap:28px; align-items:start}
+.fig-row img{display:block; width:100%; height:auto; border-radius:8px}
+.fig-row .txt{display:flex; flex-direction:column; gap:10px; max-width:56ch}
+
+/* stepper */
+.steps{display:grid; grid-template-columns:56px minmax(0,1fr); gap:32px; align-items:start}
+.rail{display:flex; flex-direction:column; gap:6px; list-style:none; margin:0; padding:0}
+.rail button{width:48px; height:48px; border:1.5px solid var(--rule); background:transparent; border-radius:4px; cursor:pointer; font-family:var(--f-display); font-weight:700; font-size:1.3rem; font-variant-numeric:tabular-nums}
+.rail button:hover{border-color:var(--ink-2)}
+.rail button[aria-current="step"]{background:var(--ink); color:var(--paper); border-color:var(--ink)}
+.step-body{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:28px; align-items:start; min-width:0}
+.step-text{display:flex; flex-direction:column; gap:14px; min-width:0}
+.step-text .snag{border-top:1px solid var(--warn); padding-top:10px; color:var(--ink)}
+.step-text .snag .mono{color:var(--warn)}
+.step-imgs{display:flex; flex-direction:column; gap:12px; min-width:0}
+.step-imgs figure{margin:0}
+.step-imgs img{display:block; width:100%; height:auto; border-radius:6px; background:#fff; border:1px solid var(--rule)}
+.step-imgs figcaption{font-size:.78rem; color:var(--ink-2); margin-top:6px}
+.noimg{border:1px dashed var(--rule); border-radius:6px; padding:22px; color:var(--ink-2); font-size:.9rem}
+.settings{border-collapse:collapse; font-size:.85rem; width:100%}
+.settings th,.settings td{text-align:left; padding:6px 10px 6px 0; border-bottom:1px solid var(--rule); font-variant-numeric:tabular-nums}
+.settings th{font-family:var(--f-mono); font-size:.7rem; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-2); font-weight:400}
+.step-nav{display:flex; gap:10px}
+
+/* plan vs built */
+.pvb{display:grid; grid-template-columns:minmax(0,1fr); gap:20px}
+.pvb svg{display:block; width:100%; height:auto}
+.pvb text{font-family:var(--f-mono); font-size:11px; fill:var(--ink-2)}
+.pvb .plan-box{fill:none; stroke:var(--ink-2); stroke-width:1.2; stroke-dasharray:5 4}
+.pvb .bed-box{fill:none; stroke:var(--warn); stroke-width:1.2; stroke-dasharray:2 3}
+.pvb .built-box{fill:#E8D8B8; stroke:#BFA373; stroke-width:1.5; transition:all .35s ease}
+.pvb .dimline{stroke:var(--ink-2); stroke-width:1}
+.legend{display:flex; flex-wrap:wrap; gap:6px 22px; font-size:.85rem; color:var(--ink-2)}
+.legend span{display:inline-flex; align-items:center; gap:8px}
+.legend i{display:inline-block; width:22px; height:0; border-top:2px dashed var(--ink-2)}
+.legend i.bed{border-color:var(--warn)}
+.legend i.solid{border-top:10px solid #E8D8B8; outline:1px solid #BFA373; height:0}
+.tbl-wrap{overflow-x:auto}
+table.cmp{border-collapse:collapse; width:100%; min-width:620px; font-size:.92rem}
+table.cmp th,table.cmp td{text-align:left; vertical-align:top; padding:12px 18px 12px 0; border-bottom:1px solid var(--rule)}
+table.cmp th{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-2); font-weight:400}
+table.cmp td:first-child{font-weight:600; white-space:nowrap}
+.pvb[data-state="plan"] .built, .pvb[data-state="built"] .plan{opacity:.38}
+.pvb .plan,.pvb .built{transition:opacity .25s ease}
+
+/* tests */
+.test-bar{display:flex; flex-wrap:wrap; gap:12px 24px; align-items:center; justify-content:space-between}
+.score{font-family:var(--f-display); font-weight:700; font-size:2.4rem; line-height:1; text-transform:uppercase}
+.score small{font-size:1.1rem; color:var(--ink-2)}
+.tests{list-style:none; margin:0; padding:0; border-top:1px solid var(--ink)}
+.tests li{border-bottom:1px solid var(--rule)}
+.tests summary{display:grid; grid-template-columns:44px minmax(0,1fr) 130px 110px; gap:12px; align-items:center; padding:14px 0; cursor:pointer; list-style:none}
+.tests summary::-webkit-details-marker{display:none}
+.tests summary:hover .c{text-decoration:underline}
+.tests .id{font-family:var(--f-mono); font-size:.78rem; color:var(--ink-2)}
+.tests .c{font-weight:600}
+.tests .c small{display:block; font-weight:400; color:var(--ink-2); font-size:.82rem}
+.tests .res{font-family:var(--f-mono); font-size:.8rem; display:flex; align-items:center; gap:8px; font-variant-numeric:tabular-nums}
+.dots{display:inline-flex; gap:3px}
+.dots i{width:9px; height:9px; border-radius:50%; background:var(--ink)}
+.dots i.off{background:transparent; box-shadow:inset 0 0 0 1.5px var(--ink-2)}
+.pill{justify-self:end; padding:3px 12px; border-radius:999px; font-size:.78rem; font-weight:600; border:1.5px solid var(--ink); background:var(--ink); color:var(--paper); white-space:nowrap}
+.pill.warn{background:transparent; color:var(--warn); border-color:var(--warn)}
+.tests .more{padding:0 0 18px 56px; display:grid; grid-template-columns:minmax(0,1fr) minmax(0,220px); gap:20px; align-items:start}
+.tests .more p{max-width:62ch; color:var(--ink-2)}
+.tests .more img{display:block; width:100%; height:auto; border-radius:6px}
+
+/* reflection */
+.cols3{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:28px}
+.cols3 .item{display:flex; flex-direction:column; gap:8px; border-top:1px solid var(--ink); padding-top:12px}
+.cols3 .item h3{font-size:1.3rem}
+.cols3.imp{grid-template-columns:repeat(2,minmax(0,1fr))}
+
+.foot{border-top:1px solid var(--rule); padding-block:40px 56px; display:flex; flex-wrap:wrap; gap:16px 32px; justify-content:space-between; align-items:center}
+.foot .mail{font-family:var(--f-mono); font-size:.95rem}
+
+@media (max-width:900px){
+  .hero{grid-template-columns:minmax(0,1fr)}
+  .sec{grid-template-columns:minmax(0,1fr); padding-block:48px}
+  .polls,.cols3,.cols3.imp,.two{grid-template-columns:minmax(0,1fr)}
+  .strip{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .panel,.step-body,.fig-row{grid-template-columns:minmax(0,1fr)}
+  .fig-row img{max-width:300px}
+  .steps{grid-template-columns:minmax(0,1fr); gap:20px}
+  .rail{flex-direction:row; overflow-x:auto; padding-bottom:6px}
+  .rail button{flex:none}
+  .tests summary{grid-template-columns:36px minmax(0,1fr) auto; row-gap:6px}
+  .tests summary .res{grid-column:2; grid-row:2}
+  .tests summary .pill{grid-column:3; grid-row:1/3; align-self:center}
+  .tests .more{padding-left:0; grid-template-columns:minmax(0,1fr)}
+  .tests .more img{max-width:240px}
+}
+@media (max-width:520px){
+  .strip{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .dim{padding-right:36px}
+  .dim-w{right:36px}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{transition:none !important; animation:none !important}
+}
+:root{--ev-hurdle:#701509; --ev-high:#DF6D0F; --ev-long:#C8D300}
+
+.panel .shot{background:none;border:0;padding:0}
+.panel .shot img+img{margin-top:14px}
+.cdesc{margin:0;line-height:1.5}
+.tabicons{margin-top:18px;display:grid;gap:10px}.tabicons img{display:block;max-width:100%;height:auto;border-radius:12px}
+.step-imgs img{background:none;border:0}
+.step-imgs.sm img{width:auto;max-width:100%;max-height:390px}
+.step-below{margin-top:22px}.step-below figure{margin:0}.step-below img{display:block;max-width:100%;height:auto;border-radius:6px}.step-below figcaption{font-size:.78rem;color:var(--ink-2);margin-top:6px}.panel .shot img{border-radius:0}
+.msr-ctl{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin-bottom:18px}.msr-ctl input{width:min(260px,100%);accent-color:var(--ev-high)}
+.msr{list-style:none;margin:0;padding:0;display:grid;gap:10px}.msr li{display:grid;grid-template-columns:minmax(120px,170px) minmax(0,1fr) 165px 100px;gap:6px 14px;align-items:center;padding:12px 0;border-top:1px solid var(--rule)}
+.msr .bars{display:grid;gap:3px}.msr .bars i{display:block;height:8px;border-radius:4px}.msr .bars .o{background:var(--ink)}.msr .bars .r{background:var(--ev-high)}
+.pillx{font-family:var(--f-mono);font-size:.78rem;padding:3px 10px;border-radius:99px;border:1.5px solid currentColor;white-space:nowrap}.pillx.ok{color:#1d7a2a}.pillx.no{color:#b3261e}
+
+.cmp-imgs.eq{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start}.cmp-imgs.eq img{height:560px;width:auto;max-width:100%}.cmp-imgs.eq figcaption{margin-top:8px}
+@media(max-width:640px){.cmp-imgs.eq img{height:auto;width:100%}.msr li{grid-template-columns:1fr auto}.msr .bars{grid-column:1/-1}}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .pillx.ok{color:#7ee08b}:root:not([data-theme="light"]) .pillx.no{color:#ff9b93}}
+.facts dd a{color:inherit;font-weight:600;text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1.5px}.facts dd a:hover{text-decoration-thickness:3px}
+#try-fig.stack{grid-template-columns:minmax(0,1fr)}
+#try-fig.stack img{width:100%;height:auto}
+.cap{font-size:.85rem;color:var(--ink-2);margin-top:8px}
+img.wide{width:100%;height:auto;border-radius:8px;display:block}
+.hero figure img{width:100%;height:auto;border-radius:8px;display:block}
+.blk{display:flex;flex-direction:column;gap:20px}
+.stake{display:grid;grid-template-columns:auto repeat(2,minmax(0,1fr));gap:10px}
+.stake .ax{font-family:var(--f-mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);writing-mode:vertical-rl;transform:rotate(180deg);text-align:center;grid-row:1/3}
+.stake .q{border:1px solid var(--rule);border-radius:8px;padding:14px;display:flex;flex-direction:column;gap:10px;background:var(--paper-2);min-width:0}
+.stake .q.key{border-color:var(--ink);border-width:2px}
+.stake .q h4{margin:0;font-family:var(--f-display);text-transform:uppercase;font-size:1.2rem;letter-spacing:.03em}
+.stake .q p{font-size:.85rem;color:var(--ink-2)}
+.stake .names{display:flex;flex-wrap:wrap;gap:6px}
+.stake .names span{padding:3px 10px;border-radius:99px;background:var(--paper);border:1px solid var(--rule);font-size:.88rem}
+.stake .xl{font-family:var(--f-mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);text-align:center}
+.chal{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;align-items:start;margin-top:16px}
+.chal-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.chal-list button{width:100%;text-align:left;border:1.5px solid var(--rule);background:transparent;border-radius:8px;padding:10px 14px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 12px;cursor:pointer}
+.chal-list button[aria-pressed="true"]{border-color:var(--ink);background:var(--paper-2)}
+.chal-list .meter{grid-column:1/-1}
+.chal-detail{border:1px solid var(--rule);border-radius:8px;padding:20px;background:var(--paper-2);display:flex;flex-direction:column;gap:12px;min-width:0}
+.chal-detail .big{font-family:var(--f-display);font-weight:700;font-size:4rem;line-height:1}
+.chal-detail .big small{font-size:1.1rem;color:var(--ink-2);margin-left:6px}
+.meter.lg{height:12px}
+.chk{--jc:#EBCC2A;display:flex;flex-direction:column;gap:18px;border:1px solid var(--rule);border-radius:8px;padding:20px;background:var(--paper-2);margin-top:14px;max-width:760px}
+.chk fieldset{border:0;padding:0;margin:0;min-width:0}
+.chk legend{font-weight:600;margin-bottom:10px;padding:0}
+.chk .icons{display:flex;flex-wrap:wrap;gap:8px}
+.ico{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:78px;padding:10px 8px;border:1.5px solid var(--rule);border-radius:8px;background:var(--paper);cursor:pointer;font-size:.8rem}
+.ico[aria-pressed="true"]{border-color:var(--ink);box-shadow:inset 0 -4px 0 var(--jc)}
+.chk .boxes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 18px}
+.cb{display:flex;gap:10px;align-items:center;cursor:pointer}
+.cb input{width:20px;height:20px;accent-color:var(--ink)}
+.chk .notes{display:flex;flex-direction:column;gap:6px;font-size:.9rem}
+.chk textarea{font:inherit;color:inherit;background:var(--paper);border:1.5px solid var(--rule);border-radius:8px;padding:10px;resize:vertical}
+.chk .btn:not(.ghost){background:var(--ink);color:var(--paper)}
+.entries{margin:16px 0 0;padding-left:0;list-style:none;display:grid;gap:8px;max-width:760px}
+.entries li{border-left:4px solid var(--jc,var(--rule));padding:6px 12px;background:var(--paper-2);border-radius:0 6px 6px 0}
+.qz{border:1px solid var(--rule);border-radius:8px;padding:22px;background:var(--paper-2);max-width:760px;margin-top:14px;display:flex;flex-direction:column;gap:14px}
+.qbar{display:flex;gap:6px}
+.qbar i{flex:1;height:10px;border-radius:5px;background:var(--rule)}
+.qbar i.ok{background:#2E8B3D}
+.qbar i.bad{background:var(--warn)}
+.qq{font-size:1.7rem}
+.opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.opt{padding:12px 14px;border:1.5px solid var(--rule);border-radius:8px;background:var(--paper);text-align:left;cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--ink)}
+.opt.ok{background:#2E8B3D;color:#fff;border-color:#2E8B3D}
+.opt.bad{background:var(--warn);color:#fff;border-color:var(--warn)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .opt.bad{color:#14161A}}
+.cmp-imgs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-bottom:18px}
+.cmp-imgs figure{margin:0}
+.cmp-imgs img{width:100%;height:auto;border-radius:8px;display:block}
+@media (max-width:760px){.chal{grid-template-columns:minmax(0,1fr)}.opts,.chk .boxes{grid-template-columns:minmax(0,1fr)}.stake{grid-template-columns:auto repeat(2,minmax(0,1fr));gap:8px}.stake .q{padding:10px}}
+
+</style></head><body>
+<div class="wrap">
+<header class="top">
+  <span class="mono">Greta Schmedes · Case study</span>
+  <nav class="mono" aria-label="Sections">
+    <a href="#brief">Brief</a><a href="#design">Design</a><a href="#try">Try it</a><a href="#build">Build</a><a href="#changes">Changes</a><a href="#tests">Tests</a>
+  </nav>
+</header>
+
+<section class="hero" aria-labelledby="t">
+  <div class="hero-copy">
+    <div class="eyebrow mono"><span class="bars3" aria-hidden="true"><i style="background:var(--ev-hurdle);box-shadow:0 0 0 1px var(--ink-2)"></i><i style="background:var(--ev-high)"></i><i style="background:var(--ev-long)"></i></span>Aeres VMBO · Social Domain Achtkarspelen Tytsjerksteradiel</div>
+    <h1 id="t">Frisian Link</h1>
+    <p class="lede">A safe website where students share projects about Frisian culture, take quizzes and compete as classes. The slogan is Be proud, be Frisian.</p>
+    <dl class="facts"><dt>Type</dt><dd>University project, Buitenpost and Leeuwarden, 04.2025 to 06.2025</dd><dt>Client</dt><dd>Aeres VMBO Leeuwarden, through a Social Domain workshop</dd><dt>My role</dt><dd>Team captain, interface design in Figma, front-end coding in HTML and CSS</dd><dt>Tools</dt><dd>Figma, HTML, CSS, Miro, Coda, MoSCoW</dd><dt>Result</dt><dd>Working website: pinboard home, quiz, upload, challenges and class leaderboard</dd></dl>
+  </div>
+  <figure style="margin:0"><img src="img/fw-login.jpg" alt="The coded login page: the heart-and-landscape logo, the tagline Be Proud, Be Frisian, and username and password fields."><figcaption class="cap">The coded login page.</figcaption></figure>
+</section>
+
+<section class="sec" id="brief"><div class="lab mono">Brief</div><div class="sec-body">
+  <div class="sec-head"><h2>Pride without the risk</h2><p>Aeres VMBO wanted a place where students aged 12 to 16 share photos, art, poems, music and videos about Frisian culture. It had to be safe from cyberbullying, easy to use and, at first, open only to the school. The school was being renovated, so we could not meet students.</p></div>
+  <div class="two"><dl class="specs"><dt>Audience</dt><dd>Students aged 12 to 16</dd><dt>Goal</dt><dd>Pride in Frisian culture</dd><dt>Safety</dt><dd>No cyberbullying</dd><dt>Access</dt><dd>School only, at first</dd><dt>Time</dt><dd>One study period, seven weeks</dd></dl><p class="muted measure">We combined a youth survey at a Social Domain workshop with desk research on Frisian culture, teenage behaviour online and educational design. I was team captain, and we met in person every Tuesday and Thursday.</p></div>
+  <div id="blocks" class="blk" style="gap:40px"></div>
+</div></section>
+
+<section class="sec" id="design"><div class="lab mono">Design</div><div class="sec-body">
+  <div class="sec-head"><h2>Four decisions that shaped the site</h2><p>Each decision answers something the survey or the research told us. Open one to see what we tried and what we kept.</p></div>
+  <div class="tabs" role="tablist" aria-label="Design stages" id="tabs"></div>
+  <div class="panel" id="panel" role="tabpanel" aria-live="polite"></div>
+</div></section>
+
+<section class="sec" id="try"><div class="lab mono">Try it</div><div class="sec-body">
+  <div class="sec-head"><h2>Take the quiz</h2><p>I coded the quiz as three questions with four answers each. With my limited JavaScript, the progress bar turns green for a right answer and red for a wrong one. These are the three Chapter 1 questions from the site, Land of Water and Survival. The answer key here is mine.</p></div>
+  <div id="try-body"></div>
+  <div class="fig-row" id="try-fig"></div>
+</div></section>
+
+<section class="sec" id="build"><div class="lab mono">Build</div><div class="sec-body">
+  <div class="sec-head"><h2>Eleven steps from brief to coded site</h2><p>Pick a step to see what I did and what went wrong.</p></div>
+  <div class="steps"><ol class="rail" id="rail" aria-label="Steps"></ol><div class="step-body" id="step" aria-live="polite"></div></div>
+</div></section>
+
+<section class="sec" id="changes"><div class="lab mono">Changes</div><div class="sec-body">
+  <div class="sec-head"><h2>Before and after feedback</h2><p>After feedback on the Figma layout I refined the coded site. Switch between the two to see what changed.</p></div>
+  <div class="pvb" id="pvb" data-state="built">
+    <div class="seg" role="radiogroup" aria-label="Compare" id="cmpSeg"></div>
+    <div class="cmp-imgs" id="cmpImgs"></div>
+    <div class="tbl-wrap"><table class="cmp"><thead id="cmpHead"></thead><tbody id="cmp"></tbody></table></div>
+  </div>
+</div></section>
+
+<section class="sec" id="tests"><div class="lab mono">Tests</div><div class="sec-body">
+  <div class="sec-head"><h2>What the evidence says</h2><p>Most of the proof comes from the workshop survey and from checking the site against the Figma design. One gap matters too. Open a row for the detail.</p></div>
+  <div class="test-bar"><div class="score" id="score"></div><div class="seg" role="group" aria-label="Filter tests" id="filters"></div></div>
+  <ul class="tests" id="tests-list"></ul>
+</div></section>
+
+<section class="sec" id="next"><div class="lab mono">Reflection</div><div class="sec-body">
+  <div class="sec-head"><h2>What I would change</h2></div>
+  <div class="cols3 imp" id="improve"></div>
+  <div class="sec-head" style="margin-top:16px"><h3>What I take into UI/UX work</h3></div>
+  <div class="cols3" id="takeaways"></div>
+</div></section>
+
+<footer class="foot">
+  <div><p class="mono">Let's connect</p><p class="mail" id="mail">gschmedes1@gmail.com</p></div>
+  <button class="btn ghost" type="button" id="copy">Copy email</button>
+</footer>
+</div>
+<script>window.CASE={"noimg": "No image for this step.", "pills": ["Supported", "Gap"], "blocks": [{"type": "bars", "title": "What young people at the workshop said", "note": "Our own survey. Percentages are shares of answers.", "polls": [{"q": "Would you be interested in joining a challenge?", "rows": [["Yes", 90.9, 1], ["No", 9.1, 0]]}, {"q": "Would competing for points appeal to you?", "rows": [["Yes", 81.8, 1], ["Maybe", 9.1, 0], ["No", 9.1, 0]]}, {"q": "Which challenge topics?", "rows": [["Traditions", 33.3, 0], ["Photography", 33.3, 0], ["Places", 33.3, 0]]}]}, {"type": "stake", "title": "Who I had to keep close", "note": "I mapped power against influence to decide who needed updates and who needed my attention.", "q": [{"h": "Keep informed", "names": ["Parents", "Teachers"], "p": "Ensure ease of use, gather feedback and make the site engaging."}, {"h": "Minimal effort", "names": ["Future students"], "p": "Not actively involved or deeply interested in the outcome, at least not yet."}, {"h": "Key players", "key": 1, "names": ["Client", "Development team"], "p": "Maximum effort. Update them regularly, involve them in decisions and prioritise their feedback."}, {"h": "Keep satisfied", "names": ["Students"], "p": "Occasional updates and consultation, especially for integration and educational relevance."}]}], "des": [{"k": "Pinboard home", "img": "img/fw-home.jpg", "alt": "The coded home page with a pinboard of student photos, search and filters.", "tried": "A Pinterest-inspired pinboard of student posts, with personalised fonts and background colours limited to school-approved options.", "said": "Young people wanted to share many kinds of content, from traditions to places and photos, and they liked visual, simple layouts.", "saidLabel": "Why", "took": "The pinboard layout, which the coded site keeps."}, {"k": "Safe reactions", "img": "img/fw-post.jpg", "alt": "A single post in the coded site, with the photo and its details.", "tried": "No comment sections. Students react with preset positive buttons, and uploads use only approved fonts and colours.", "said": "Privacy and cyberbullying were the main worries for the school and for the young people we asked.", "saidLabel": "Why", "took": "A positive space by design, not by moderation."}, {"k": "Quiz and class score", "img": "img/fw-quizstart.jpg", "alt": "The coded quiz page with a class leaderboard table.", "tried": "A quiz about Frisian history and culture, and a leaderboard that shows class scores instead of individual scores.", "said": "Most young people liked challenges and points. Class scores keep the competition friendly.", "saidLabel": "Why", "took": "Competition between classes, not between students."}, {"k": "Look and avatars", "img": "img/sd-colors.jpg", "alt": "Three colour theme options for the site with orange, red, lime and green.", "tried": "Kawaii-style animal avatars, an orange, red, lime and green palette from the school’s branding, and a heart-and-landscape logo.", "said": "Research on 12 to 16-year-olds suggested a colourful, playful and intuitive style.", "saidLabel": "Why", "took": "A friendly look that is easy to read for young teens."}], "tryit": {"type": "quiz", "qs": [["Why did early Frisians build terpen (artificial mounds)?", ["To grow food on them", "To avoid wild animals", "To protect from floods", "To store treasure"], 2], ["What was the relationship between the Frisians and the Romans?", ["The Romans conquered Friesland", "The Frisians and Romans traded peacefully", "The Romans avoided Friesland completely", "The Frisians joined the Roman army"], 1], ["Which natural element shaped early Frisian life?", ["Mountains", "Forests", "The Sea", "Deserts"], 2]], "fig": {"img": "img/fl-quiz-ba.jpg", "alt": "The quiz progress bar before answering (orange), after a right answer (green) and after a wrong answer (red).", "h": "Colour feedback instead of JavaScript", "p": "I did not know enough JavaScript to score a quiz properly, so I used what I could do in HTML and CSS: the progress bar turns green for a right answer and red for a wrong one.", "stack": true}}, "steps": [{"t": "Map the stakeholders", "p": "I grouped stakeholders by power and influence. The client and development team were key players. Students needed to stay satisfied, parents and teachers kept informed, and future students got minimal effort. It showed me where to spend my time.", "snag": null, "imgs": [["img/fl-stake.jpg", "Stakeholder tables: interests, influence, involvement"]]}, {"t": "Survey and desk research", "p": "We surveyed young people at a Social Domain workshop and ran desk research on Frisian culture and history, behaviour of 12 to 16-year-olds, and educational design with quizzes and leaderboards.", "snag": "Renovations at Aeres meant we could not speak to students, and the client was available for only one workshop.", "imgs": []}, {"t": "Plan with MoSCoW and Coda", "p": "We sorted features into must, should, could and won’t have, with an owner, a target group and a target week for each. Must haves were uploads, quizzes and leaderboards. Badges and multilingual support were could haves. A full mobile app was a won’t have. Coda held notes, tasks and weekly progress.", "snag": null, "imgs": [["img/fl-moscow-1.jpg", "Must have and should have"], ["img/fl-moscow-2.jpg", "Could have and won’t have"]]}, {"t": "Present progress to the group", "p": "Every week our team showed what we had done. Progress list from presentation 2: a survey for feedback, the workshop with the client, content for the website, contact with the school for student interviews, first prototypes and character designs. Presentation 1 introduced the concept, a space for students to share and present themselves and their art in a local historical context, and four sketched pages.", "snag": null, "imgs": [["img/sd-concept.jpg", "Presentation 1: our concept"], ["img/sd-idea-hist.jpg", "Presentation 1: design idea, history and home page"], ["img/sd-idea-up.jpg", "Presentation 1: design idea, upload and leaderboard or quiz page"]]}, {"t": "Logo, colour and type", "p": "We sketched logo ideas, including frogs, cows and clogs, and settled on a heart-and-landscape mark that sits next to the Aeres MBO logo. We compared three colour themes built from orange, red, lime and green, and tested heading and body fonts in specimen sheets.", "snag": null, "imgs": [["img/sd-logos.jpg", "Presentation 2: logo sketches and the final mark"], ["img/sd-colors.jpg", "Presentation 2: colour themes"], ["img/sd-type.jpg", "Presentation 2: typography options"]]}, {"t": "Paper to Figma", "p": "We split the team by strength: character design, storyline, Figma and development. The work moved from paper prototype to mid and high-fidelity Figma, and I supported the high-fidelity phase.", "snag": null, "imgs": []}, {"t": "Split the code", "p": "My teammate and I split the site in two halves. Mine was the homepage, quiz, quiz result, individual upload page, current, this week’s and past challenges, and the leaderboard. I matched layout, colour, type and interactions to the Figma file.", "snag": null, "imgs": [["img/fl-figma-challenge.jpg", "Figma prototype: this week’s challenge"], ["img/fl-figma-board.jpg", "Figma prototype: leaderboard"]]}, {"t": "Build the quiz", "p": "The quiz has three questions with four answers each. A progress bar turns green for a correct answer and red for a wrong one, and a result page shows the score with options to try again or explore more.", "snag": "I did not know enough JavaScript to score a quiz properly, so the feedback is colour-based.", "imgs": [["img/fl-quiz-ba.jpg", "Quiz progress bar: before, right answer, wrong answer"], ["img/fw-q1.jpg", "Question 1"], ["img/fw-q2.jpg", "Question 2"], ["img/fw-q3.jpg", "Question 3"]]}, {"t": "Leaderboard, upload and challenges", "p": "The leaderboard shows class rankings and scores. The upload page keeps the steps simple, and challenge pages separate current, this week’s and past tasks. All pages share one structure and are built to adjust to screen size.", "snag": null, "imgs": [["img/fl-board-ba.jpg", "Leaderboard: coded site and Figma prototype"], ["img/fw-upload.jpg", "Coded upload page"], ["img/fw-challenges.jpg", "Coded challenges page"], ["img/fw-past.jpg", "Past challenges"], ["img/fw-result.jpg", "Quiz result page"]]}, {"t": "Learn and debug", "p": "I used Codecademy for the basics, W3Schools for quick answers and my older brother, who works in IT, for file organisation, correct HTML structure, debugging and responsive CSS.", "snag": "It took a lot of time and effort to deliver everything my half needed.", "imgs": []}, {"t": "Refine after feedback", "p": "I adjusted alignment, spacing and typography to match the Figma mock-ups, added visual feedback for quiz answers and improved the upload forms with categorised drop-downs and hover states.", "snag": null, "imgs": []}], "cmp": {"a": "Before feedback", "b": "After feedback", "cols": ["What", "Before", "After", "Why"], "rows": [["Alignment and spacing", "Inconsistent spacing and alignment, especially in profile sections and quiz buttons. Weak hierarchy.", "Consistent padding, grid layout, structured navigation and headings.", "Feedback on the Figma layout."], ["Quiz", "Answers without visual hints.", "Options indicate right and wrong with colour cues.", "Students need to see the result straight away."], ["Leaderboard", "Weak hierarchy between class names and scores.", "Legible, with clear hierarchy between class names and scores.", "Competition should be easy to read."], ["Upload pages", "Not yet refined.", "Better button alignment and categorised drop-downs.", "Clear upload steps for students."], ["Interaction", "No interactive visual hints.", "Hover states, quiz feedback and categorised drop-downs.", "Usability."], ["Responsiveness", "Figma frames only.", "Cleaner component spacing and scalable layout elements.", "The coded site had to adapt to different screens."]], "imgs": [["img/fl-quiz-ba.jpg", "Quiz page"], ["img/fl-board-ba.jpg", "Leaderboard: coded site and Figma prototype"]]}, "tests": [{"c": "Young people want to join challenges", "m": "Workshop survey", "ok": 1, "res": "90.9% yes", "d": "Almost everyone we asked was interested in joining a challenge."}, {"c": "Competing for points appeals", "m": "Workshop survey", "ok": 1, "res": "81.8% yes", "d": "Most said competing for points appeals to them. 9.1% said maybe and 9.1% said no. That is why the leaderboard counts classes, not individuals."}, {"c": "The site matches the Figma design", "m": "Compared page by page", "ok": 1, "res": "Matches", "d": "The final site closely resembles the high-fidelity design: pinboard-inspired layout, buttons and interactivity, colour scheme and typography, visual clarity and consistency.", "img": "img/fl-final-vs-figma.jpg", "alt": "The coded challenges page next to the Figma prototype"}, {"c": "The quiz gives clear feedback", "m": "Built and reviewed", "ok": 1, "res": "Colour cues", "d": "Each option shows a clear correct or incorrect state with colour."}, {"c": "Pages adapt to different screens", "m": "My own check", "ok": 1, "res": "Built to adjust", "d": "I built my half to adjust to screen size. I have not run a formal device test, so this is a self-check.", "pill": "Self-check"}, {"c": "Students at Aeres tried it", "m": "Test plan", "ok": 0, "res": "Not possible", "d": "The school was being renovated and our request to speak to students was denied. We relied on the workshop survey, desk research and client feedback sessions.", "pill": "Gap"}], "improve": [["Learn JavaScript properly", "The quiz shows right and wrong with colour only. With more JavaScript I would score answers, store results and update the leaderboard."], ["Test with real students", "The renovation blocked direct testing. I would ask for a short on-site session earlier, even with a handful of students."], ["Plan feedback rounds in", "Limited client availability meant one workshop and little feedback. I would book feedback moments at the start."]], "take": [["Design to code teaches the details", "Matching the Figma file exactly taught me about spacing, hierarchy and grids more than designing alone."], ["Lead with structure", "Twice-weekly check-ins, Coda and MoSCoW kept the team focused when access to the client and students fell through."], ["Adapt when access falls through", "Without direct user input I leaned on desk research and the survey, and I learned to make confident decisions with the evidence I had."]]};</script>
+<script>
+(function(){
+var D=window.CASE;
+var $=function(s,r){return (r||document).querySelector(s)};
+var el=function(tag,attrs,html){var e=document.createElement(tag); if(attrs){for(var k in attrs){e.setAttribute(k,attrs[k])}} if(html!==undefined){e.innerHTML=html} return e};
+var pct=function(n){return (Math.round(n*10)/10)+'%'};
+
+/* ---------- brief blocks ---------- */
+var blocks=$('#blocks');
+(D.blocks||[]).forEach(function(b){
+  var w=el('div',{'class':'blk'});
+  if(b.type==='bars'){
+    w.innerHTML='<div class="sec-head"><h3>'+b.title+'</h3>'+(b.note?'<p class="muted">'+b.note+'</p>':'')+'</div>';
+    var polls=el('div',{'class':'polls'});
+    b.polls.forEach(function(p){
+      var d=el('div',{'class':'poll'},'<h3>'+p.q+'</h3>');
+      p.rows.forEach(function(r){
+        d.appendChild(el('div',{'class':'row'+(r[2]?' win':'')},'<span class="lbl">'+r[0]+'</span><span class="n">'+pct(r[1])+'</span><span class="bar"><i style="width:'+r[1]+'%"></i></span>'));
+      });
+      polls.appendChild(d);
+    });
+    w.appendChild(polls);
+  } else if(b.type==='cards'){
+    w.innerHTML='<div class="sec-head"><h3>'+b.title+'</h3></div><div class="cols3">'+b.items.map(function(x){return '<div class="item"><h3>'+x[0]+'</h3><p class="muted">'+x[1]+'</p></div>'}).join('')+'</div>';
+  } else if(b.type==='stake'){
+    var q=b.q;
+    w.innerHTML='<div class="sec-head"><h3>'+b.title+'</h3><p class="muted">'+b.note+'</p></div><div class="stake" role="group" aria-label="Stakeholder map by power and influence">'
+      +'<span class="ax">Power, low to high</span>'
+      +q.map(function(x){return '<div class="q'+(x.key?' key':'')+'"><h4>'+x.h+'</h4><div class="names">'+x.names.map(function(n){return '<span>'+n+'</span>'}).join('')+'</div><p>'+x.p+'</p></div>'}).join('')
+      +'<span></span><span class="xl">Influence, low to high</span><span class="xl"></span></div>';
+  } else if(b.type==='text'){
+    w.innerHTML='<p class="muted measure">'+b.text+'</p>';
+  } else if(b.type==='img'){
+    w.innerHTML='<figure style="margin:0"><img class="wide" src="'+b.src+'" alt="'+b.alt+'" loading="lazy"><figcaption class="cap">'+b.cap+'</figcaption></figure>';
+  }
+  blocks.appendChild(w);
+});
+
+/* ---------- design explorer ---------- */
+var tabs=$('#tabs'), panel=$('#panel'), cur=0;
+D.des.forEach(function(d,i){
+  var b=el('button',{'class':'tab',type:'button',role:'tab',id:'tab'+i,'aria-controls':'panel'},d.k);
+  b.addEventListener('click',function(){pick(i,true)});
+  b.addEventListener('keydown',function(e){
+    var n=null;
+    if(e.key==='ArrowRight')n=(cur+1)%D.des.length; else if(e.key==='ArrowLeft')n=(cur+D.des.length-1)%D.des.length;
+    if(n!==null){e.preventDefault(); pick(n,true)}
+  });
+  tabs.appendChild(b);
+});
+function pick(i,focus){
+  cur=i; var d=D.des[i];
+  Array.prototype.forEach.call(tabs.children,function(b,j){
+    b.setAttribute('aria-selected',j===i?'true':'false'); b.tabIndex=(j===i)?0:-1;
+    if(j===i&&focus)b.focus();
+  });
+  panel.setAttribute('aria-labelledby','tab'+i);
+  var ims=d.imgs||[[d.img,d.alt]];var h='<div class="shot">'+ims.map(function(m){return '<img src="'+m[0]+'" alt="'+m[1]+'">'}).join('')+'</div><div class="info">';
+  h+='<div class="kv"><span class="mono">What it tried</span><p>'+d.tried+'</p></div>';
+  if(d.said) h+='<div class="kv"><span class="mono">'+(d.saidLabel||'What people said')+'</span><p>'+d.said+'</p></div>';
+  if(d.took) h+='<div class="took"><span class="mono">Taken forward</span><p><strong>'+d.took+'</strong></p></div>';
+  if(d.icons) h+='<div class="tabicons">'+d.icons.map(function(m){return '<img src="'+m[0]+'" alt="'+m[1]+'">'}).join('')+'</div>';
+  if(d.recipe){
+    h+='<div class="kv"><span class="mono">Where each part came from</span></div><div class="recipe">'+d.recipe.map(function(r){return '<button type="button" data-g="'+r[1]+'"><b>'+r[0]+'</b> '+r[2]+'</button>'}).join('')+'</div>';
+  }
+  h+='</div>';
+  panel.innerHTML=h;
+  Array.prototype.forEach.call(panel.querySelectorAll('.recipe button'),function(b){
+    b.addEventListener('click',function(){pick(+b.getAttribute('data-g'),true)});
+  });
+}
+pick(D.des.length-1,false);
+
+/* ---------- try it ---------- */
+var T=D.tryit, root=$('#try-body');
+if(T.type==='challenges'){
+  var mode=0, sel=0;
+  root.innerHTML='<div class="rack-ui"><div class="seg" role="radiogroup" aria-label="Challenge type" id="cMode"></div><span class="muted" id="cSum"></span></div>'
+    +'<div class="chal"><ul class="chal-list" id="cList"></ul><div class="chal-detail" id="cDet" aria-live="polite"></div></div>';
+  T.modes.forEach(function(m,i){
+    var b=el('button',{'class':'chip',type:'button',role:'radio','aria-checked':i===0?'true':'false'},m.name);
+    b.addEventListener('click',function(){mode=i;sel=0;Array.prototype.forEach.call($('#cMode').children,function(x,j){x.setAttribute('aria-checked',j===i?'true':'false')});drawC()});
+    $('#cMode').appendChild(b);
+  });
+  var drawC=function(){
+    var m=T.modes[mode];
+    $('#cSum').textContent='Money saved so far in this view: '+m.saved;
+    $('#cList').innerHTML=m.items.map(function(c,i){return '<li><button type="button" data-i="'+i+'" aria-pressed="'+(i===sel)+'"><span class="nm">'+c[0]+'</span><span class="mono" style="color:var(--ink)">'+c[1]+'%</span><span class="meter"><i style="width:'+c[1]+'%"></i></span></button></li>'}).join('');
+    var c=m.items[sel];
+    $('#cDet').innerHTML='<span class="mono">'+m.name+' challenge</span><h3>'+c[0]+'</h3><div class="big">'+c[1]+'<small>% done</small></div><div class="meter lg"><i style="width:'+c[1]+'%"></i></div>'+(c[3]?'<p class="cdesc">'+c[3]+'</p>':'')+'<dl class="specs"><dt>Saving range</dt><dd>'+c[2]+'</dd></dl><p class="muted">Figures come from the final screens. Tap another challenge to compare.</p>';
+    Array.prototype.forEach.call($('#cList').querySelectorAll('button'),function(b){b.addEventListener('click',function(){sel=+b.getAttribute('data-i');drawC()})});
+  };
+  drawC();
+}
+if(T.type==='checkup'){
+  var P={check:'M4 12l5 5 11-11',dash:'M5 12h14',drop:'M12 3c3 4 6 7 6 11a6 6 0 0 1-12 0c0-4 3-7 6-11z',x:'M6 6l12 12M18 6L6 18',z:'M6 6h12L6 18h12',wave:'M3 12c2-3 4-3 6 0s4 3 6 0 4-3 6 0',flame:'M12 3c1 4 5 5 5 10a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 2 2 2 0-3-1-5 1-8z'};
+  var ic=function(n){return '<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+P[n]+'"/></svg>'};
+  var st={q1:null,q2:[],q3:null}, entries=[], jc=0;
+  root.innerHTML='<div class="seg" role="radiogroup" aria-label="Journal colour theme" id="jSeg"></div>'
+    +'<form class="chk" id="chk" autocomplete="off"><p class="mono" id="chkDate"></p>'
+    +'<fieldset><legend>1. Today I feel</legend><div class="icons" id="q1"></div></fieldset>'
+    +'<fieldset><legend>2. Today, while eating, I</legend><div class="boxes" id="q2"></div></fieldset>'
+    +'<fieldset><legend>3. After eating, my body felt</legend><div class="icons" id="q3"></div></fieldset>'
+    +'<label class="notes"><span>My notes for today (optional)</span><textarea id="qn" rows="3" placeholder="How you felt today, what you ate, something that gives you strength"></textarea></label>'
+    +'<div class="step-nav"><button class="btn" type="submit" id="qs">Save today</button><button class="btn ghost" type="button" id="qr">Clear</button></div>'
+    +'<p class="note" id="qmsg" aria-live="polite"></p></form><ol class="entries" id="entries"></ol>';
+  $('#chkDate').textContent='Today is '+new Date().toLocaleDateString(undefined,{day:'2-digit',month:'2-digit',year:'numeric'});
+  T.journals.forEach(function(j,i){
+    var b=el('button',{'class':'chip',type:'button',role:'radio','aria-checked':i===0?'true':'false'},'<span class="sw" style="--c:'+j[1]+'"></span>'+j[0]);
+    b.addEventListener('click',function(){jc=i;$('#chk').style.setProperty('--jc',j[1]);Array.prototype.forEach.call($('#jSeg').children,function(x,k){x.setAttribute('aria-checked',k===i?'true':'false')})});
+    $('#jSeg').appendChild(b);
+  });
+  $('#chk').style.setProperty('--jc',T.journals[0][1]);
+  var iconRow=function(id,list,key){
+    list.forEach(function(it,i){
+      var b=el('button',{'class':'ico',type:'button','aria-pressed':'false'},ic(it[1])+'<span>'+it[0]+'</span>');
+      b.addEventListener('click',function(){st[key]=(st[key]===it[0])?null:it[0];Array.prototype.forEach.call($(id).children,function(x,j){x.setAttribute('aria-pressed',st[key]===list[j][0]?'true':'false')})});
+      $(id).appendChild(b);
+    });
+  };
+  iconRow('#q1',T.q1,'q1'); iconRow('#q3',T.q3,'q3');
+  T.q2.forEach(function(t,i){
+    var l=el('label',{'class':'cb'},'<input type="checkbox" id="cb'+i+'"><span>'+t+'</span>');
+    $('input',l).addEventListener('change',function(){st.q2=T.q2.filter(function(x,j){return $('#cb'+j).checked})});
+    $('#q2').appendChild(l);
+  });
+  $('#qr').addEventListener('click',function(){reset();$('#qmsg').textContent=''});
+  function reset(){st={q1:null,q2:[],q3:null};$('#qn').value='';Array.prototype.forEach.call(document.querySelectorAll('#q1 button,#q3 button'),function(b){b.setAttribute('aria-pressed','false')});T.q2.forEach(function(t,i){$('#cb'+i).checked=false})}
+  $('#chk').addEventListener('submit',function(e){
+    e.preventDefault();
+    if(!st.q1&&!st.q3&&!st.q2.length){$('#qmsg').textContent='Pick at least one answer first. Every question is optional, so a single answer is enough.';return}
+    entries.push({a:st.q1,b:st.q2.slice(),c:st.q3,n:$('#qn').value});
+    $('#qmsg').textContent=T.saved;
+    $('#entries').innerHTML=entries.map(function(en,i){return '<li><span class="mono">Entry '+(i+1)+'</span> Felt <b>'+(en.a||'no answer')+'</b>. While eating: '+(en.b.length?en.b.join(', ').toLowerCase():'nothing ticked')+'. Body felt <b>'+(en.c||'no answer')+'</b>.'+(en.n?' Note: '+en.n.replace(/</g,'&lt;'):'')+'</li>'}).join('');
+    reset();
+  });
+}
+if(T.type==='measure'){
+  var tol=T.tol;
+  root.innerHTML='<div class="msr-ctl"><label for="tol" class="mono">Allowed difference: <b id="tolv"></b> mm</label><input type="range" id="tol" min="0" max="6" step="1" value="'+tol+'"><span class="muted" id="msum" aria-live="polite"></span></div><ul class="msr" id="msr"></ul>';
+  var drawM=function(){
+    tol=+$('#tol').value; $('#tolv').textContent=tol;
+    var ok=0;
+    $('#msr').innerHTML=T.rows.map(function(r){
+      var d=Math.abs(r[1]-r[2]), good=d<=tol; if(good) ok++;
+      var mx=Math.max.apply(null,T.rows.map(function(x){return Math.max(x[1],x[2])}));
+      return '<li><span class="nm">'+r[0]+'</span><span class="bars"><i class="o" style="width:'+(r[1]/mx*100)+'%"></i><i class="r" style="width:'+(r[2]/mx*100)+'%"></i></span><span class="mono">'+(r[1]/10)+' cm vs '+(r[2]/10)+' cm</span><span class="pillx '+(good?'ok':'no')+'">'+d+' mm '+(good?'within':'over')+'</span></li>';
+    }).join('');
+    $('#msum').textContent=ok+' of '+T.rows.length+' measurements within '+tol+' mm.';
+  };
+  $('#tol').addEventListener('input',drawM); drawM();
+}
+if(T.type==='quiz'){
+  var qi=0, score=0, answered=false, marks=[];
+  root.innerHTML='<div class="qz" id="qz"></div>';
+  var drawQ=function(){
+    var z=$('#qz');
+    var bar='<div class="qbar" aria-hidden="true">'+T.qs.map(function(q,i){return '<i class="'+(marks[i]||'')+'"></i>'}).join('')+'</div>';
+    if(qi>=T.qs.length){
+      z.innerHTML=bar+'<h3>You scored '+score+' of '+T.qs.length+'</h3><p class="muted">'+(score===T.qs.length?'Full marks. ':'')+'Try again or explore more content, as on the result page of the site.</p><div class="step-nav"><button class="btn" type="button" id="qa">Try again</button></div>';
+      $('#qa').addEventListener('click',function(){qi=0;score=0;marks=[];drawQ()});return;
+    }
+    var q=T.qs[qi]; answered=false;
+    z.innerHTML=bar+'<p class="mono">Question '+(qi+1)+' of '+T.qs.length+'</p><h3 class="qq">'+q[0]+'</h3><div class="opts">'+q[1].map(function(o,i){return '<button type="button" class="opt" data-i="'+i+'">'+o+'</button>'}).join('')+'</div><p class="note" id="qfb" aria-live="polite"></p><div class="step-nav"><button class="btn" type="button" id="qnx" hidden>'+(qi===T.qs.length-1?'See result':'Next question')+'</button></div>';
+    Array.prototype.forEach.call(z.querySelectorAll('.opt'),function(b){b.addEventListener('click',function(){
+      if(answered)return; answered=true; var i=+b.getAttribute('data-i'), ok=(i===q[2]);
+      if(ok)score++; marks[qi]=ok?'ok':'bad';
+      Array.prototype.forEach.call(z.querySelectorAll('.opt'),function(x,j){x.disabled=true; if(j===q[2])x.classList.add('ok'); else if(j===i)x.classList.add('bad')});
+      z.querySelectorAll('.qbar i')[qi].className=marks[qi];
+      $('#qfb').textContent=ok?'Right.':'Not this time. The right answer is '+q[1][q[2]]+'.';
+      $('#qnx').hidden=false; $('#qnx').focus();
+    })});
+    $('#qnx').addEventListener('click',function(){qi++;drawQ()});
+  };
+  drawQ();
+}
+if(T.fig){ if(T.fig.stack) $('#try-fig').classList.add('stack'); $('#try-fig').innerHTML='<img src="'+T.fig.img+'" alt="'+T.fig.alt+'" loading="lazy"><div class="txt"><h3>'+T.fig.h+'</h3><p class="muted">'+T.fig.p+'</p></div>'; } else $('#try-fig').hidden=true;
+
+/* ---------- build stepper ---------- */
+var rail=$('#rail'), stepEl=$('#step'), si=0, L=D.steps;
+L.forEach(function(l,i){
+  var li=el('li'); var b=el('button',{type:'button','aria-label':'Step '+(i+1)+': '+l.t},String(i+1));
+  b.addEventListener('click',function(){showStep(i)});
+  li.appendChild(b); rail.appendChild(li);
+});
+function showStep(i){
+  si=i; var l=L[i];
+  Array.prototype.forEach.call(rail.querySelectorAll('button'),function(b,j){ if(j===i)b.setAttribute('aria-current','step'); else b.removeAttribute('aria-current')});
+  var h='<div class="step-text"><span class="mono">Step '+(i+1)+' of '+L.length+'</span><h3>'+l.t+'</h3><p>'+l.p+'</p>';
+  if(l.snag)h+='<div class="snag"><span class="mono">What went wrong</span><p>'+l.snag+'</p></div>';
+  h+='<div class="step-nav"><button class="btn ghost" type="button" id="prev"'+(i===0?' disabled style="opacity:.4;cursor:default"':'')+'>Previous</button><button class="btn" type="button" id="next"'+(i===L.length-1?' disabled style="opacity:.4;cursor:default"':'')+'>Next</button></div>';
+  if(l.below&&l.below.length){h+='<div class="step-below">'+l.below.map(function(m){return '<figure><img src="'+m[0]+'" alt="'+m[1]+'" loading="lazy"><figcaption>'+m[1]+'</figcaption></figure>'}).join('')+'</div>'}
+  h+='</div>';
+  h+='<div class="step-imgs'+(l.small?' sm':'')+'">';
+  if(l.imgs&&l.imgs.length){l.imgs.forEach(function(m){h+='<figure><img src="'+m[0]+'" alt="'+m[1]+'" loading="lazy"><figcaption>'+m[1]+'</figcaption></figure>'})}
+  else h+='<div class="noimg">'+(D.noimg||'No image for this step.')+'</div>';
+  h+='</div>';
+  stepEl.innerHTML=h;
+  var p=$('#prev'),n=$('#next');
+  if(p)p.addEventListener('click',function(){if(si>0)showStep(si-1)});
+  if(n)n.addEventListener('click',function(){if(si<L.length-1)showStep(si+1)});
+}
+showStep(0);
+
+/* ---------- changes ---------- */
+var C=D.cmp, pvb=$('#pvb');
+if(C){
+$('#cmpSeg').innerHTML='<button class="chip" type="button" role="radio" aria-checked="false" data-s="plan">'+C.a+'</button><button class="chip" type="button" role="radio" aria-checked="true" data-s="built">'+C.b+'</button>';
+$('#cmpHead').innerHTML='<tr><th>'+C.cols[0]+'</th><th class="plan">'+C.cols[1]+'</th><th class="built">'+C.cols[2]+'</th><th>'+C.cols[3]+'</th></tr>';
+$('#cmp').innerHTML=C.rows.map(function(r){return '<tr><td>'+r[0]+'</td><td class="plan">'+r[1]+'</td><td class="built">'+r[2]+'</td><td>'+r[3]+'</td></tr>'}).join('');
+$('#cmpImgs').innerHTML=(C.imgs||[]).map(function(m){return '<figure><img src="'+m[0]+'" alt="'+m[1]+'" loading="lazy"><figcaption>'+m[1]+'</figcaption></figure>'}).join('');
+if(!(C.imgs||[]).length) $('#cmpImgs').hidden=true;
+if(C.eq) $('#cmpImgs').className+=' eq';
+function setState(s){pvb.setAttribute('data-state',s);Array.prototype.forEach.call(pvb.querySelectorAll('.chip'),function(b){b.setAttribute('aria-checked',b.getAttribute('data-s')===s?'true':'false')})}
+Array.prototype.forEach.call(pvb.querySelectorAll('.chip'),function(b){b.addEventListener('click',function(){setState(b.getAttribute('data-s'))})});
+setState('built');
+}
+
+/* ---------- tests ---------- */
+var list=$('#tests-list'), okN=0;
+D.tests.forEach(function(t,i){
+  if(t.ok)okN++;
+  var li=el('li'); li.setAttribute('data-ok',t.ok?'1':'0');
+  var more='<div class="more"><p>'+t.d+'</p>'+(t.img?'<img src="'+t.img+'" alt="'+(t.alt||'')+'">':'')+'</div>';
+  li.innerHTML='<details><summary><span class="id">T'+(i+1)+'</span><span class="c">'+t.c+'<small>'+t.m+'</small></span><span class="res">'+t.res+'</span><span class="pill'+(t.ok?'':' warn')+'">'+(t.pill||(t.ok?D.pills[0]:D.pills[1]))+'</span></summary>'+more+'</details>';
+  list.appendChild(li);
+});
+$('#score').innerHTML=okN+' <small>of '+D.tests.length+' '+D.pills[0].toLowerCase()+'</small>';
+var fBox=$('#filters');
+[['all','All '+D.tests.length],['1',D.pills[0]+' '+okN],['0',D.pills[1]+' '+(D.tests.length-okN)]].forEach(function(f){
+  var b=el('button',{'class':'chip',type:'button','aria-pressed':f[0]==='all'?'true':'false'},f[1]);
+  b.addEventListener('click',function(){
+    Array.prototype.forEach.call(fBox.children,function(x){x.setAttribute('aria-pressed',x===b?'true':'false')});
+    Array.prototype.forEach.call(list.children,function(li){li.hidden=(f[0]!=='all'&&li.getAttribute('data-ok')!==f[0])});
+  });
+  fBox.appendChild(b);
+});
+
+/* ---------- reflection ---------- */
+$('#improve').innerHTML=D.improve.map(function(x){return '<div class="item"><h3>'+x[0]+'</h3><p class="muted">'+x[1]+'</p></div>'}).join('');
+$('#takeaways').innerHTML=D.take.map(function(x){return '<div class="item"><h3>'+x[0]+'</h3><p class="muted">'+x[1]+'</p></div>'}).join('');
+
+/* ---------- copy email ---------- */
+$('#copy').addEventListener('click',function(){
+  var btn=this, node=$('#mail');
+  function fallback(){var r=document.createRange(); r.selectNodeContents(node); var sl=window.getSelection(); sl.removeAllRanges(); sl.addRange(r); btn.textContent='Selected'}
+  try{navigator.clipboard.writeText(node.textContent).then(function(){btn.textContent='Copied'},fallback)}catch(e){fallback()}
+  setTimeout(function(){btn.textContent='Copy email'},2000);
+});
+})();
+
+</script>
+</body></html>
